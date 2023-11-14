@@ -33,6 +33,12 @@
         "projectId": "40a305b8-48fe-4cae-a578-c2f1206be48f"
       }
     },
-    "owner": "ecse_424"
+    "owner": "ecse_424",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/40a305b8-48fe-4cae-a578-c2f1206be48f"
+    }
   }
 }
