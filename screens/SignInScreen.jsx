@@ -11,7 +11,7 @@ function SignInScreen({ navigation }) {
   };
 
   const handleSignUpNavigation = () => {
-    navigation.navigate('MainTabs');
+    navigation.navigate('SignUp');
   };
 
   return (

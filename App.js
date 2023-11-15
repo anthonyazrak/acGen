@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'; // Import create
 import SignInScreen from './screens/SignInScreen'; // Make sure to import SignInScreen
 import HomeScreen from './screens/HomeScreen';
 import SavedScreen from './screens/SavedScreen';
+import SignUpScreen from './screens/SignUpScreen';
 import GenerateScreen from './screens/GenerateScreen';
 import PictureScreen from './screens/PictureScreen';
 import AccountScreen from './screens/AccountScreen';
@@ -87,6 +88,7 @@ function SignInStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
     </Stack.Navigator>
   );
 }
