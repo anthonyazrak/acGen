@@ -1,13 +1,44 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
+import {
+  logInWithEmailAndPassword,
+  registerWithEmailAndPassword,
+  sendPasswordReset,
+  auth,
+} from "../services/firebase";
 
 function SignInScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null); // To store the authenticated user
+
+  useEffect(() => {
+    // Firebase Auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        // Redirect to the root path if there's no signed-in user
+        navigation.navigate("MainTabs");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const handleSignIn = () => {
     // Insert sign-in logic here
-    navigation.navigate('MainTabs');
+    logInWithEmailAndPassword(email, password);
+    // navigation.navigate("MainTabs");
   };
 
   const handleSignUpNavigation = () => {
@@ -17,7 +48,7 @@ function SignInScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Sign in</Text>
-      
+
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
@@ -26,7 +57,7 @@ function SignInScreen({ navigation }) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
+
       <TextInput
         style={styles.input}
         onChangeText={setPassword}
@@ -34,11 +65,11 @@ function SignInScreen({ navigation }) {
         placeholder="Password"
         secureTextEntry
       />
-      
+
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>
         <Text style={styles.buttonText}>Sign in</Text>
       </TouchableOpacity>
-      
+
       <View style={styles.signupContainer}>
         <Text style={styles.signupText}>Don't have an account?</Text>
         <TouchableOpacity onPress={handleSignUpNavigation}>
@@ -52,36 +83,36 @@ function SignInScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '100%',
+    width: "100%",
     marginVertical: 10,
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
-    borderColor: 'gray',
+    borderColor: "gray",
   },
   button: {
-    backgroundColor: 'black',
+    backgroundColor: "black",
     padding: 15,
     borderRadius: 5,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginTop: 20,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   signupContainer: {
     marginTop: 20,
@@ -90,9 +121,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signupButton: {
-    color: 'blue',
+    color: "blue",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
