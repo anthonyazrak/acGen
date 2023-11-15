@@ -1,12 +1,7 @@
 {
   "expo": {
-<<<<<<< HEAD
     "name": "ai-activity-generator",
     "slug": "ai-activity-generator",
-=======
-    "name": "acGen",
-    "slug": "acGen",
->>>>>>> 2dd1a3d1b0a3f98e1abb0985c7eb871d551c4f1e
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,18 +15,13 @@
       "**/*"
     ],
     "ios": {
-<<<<<<< HEAD
       "supportsTablet": true,
       "bundleIdentifier": "activityGenerator"
-=======
-      "supportsTablet": true
->>>>>>> 2dd1a3d1b0a3f98e1abb0985c7eb871d551c4f1e
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-<<<<<<< HEAD
       },
       "package": "com.ecse_424.aiactivitygenerator"
     },
@@ -49,12 +39,6 @@
     },
     "updates": {
       "url": "https://u.expo.dev/40a305b8-48fe-4cae-a578-c2f1206be48f"
-=======
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
->>>>>>> 2dd1a3d1b0a3f98e1abb0985c7eb871d551c4f1e
     }
   }
 }
