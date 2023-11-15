@@ -1,25 +1,36 @@
-
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack'; // Import createStackNavigator
+import SignInScreen from './screens/SignInScreen'; // Make sure to import SignInScreen
 import HomeScreen from './screens/HomeScreen';
 import SavedScreen from './screens/SavedScreen';
 import GenerateScreen from './screens/GenerateScreen';
 import PictureScreen from './screens/PictureScreen';
 import AccountScreen from './screens/AccountScreen';
 import StackNavigation from './StackNavigation';
-
+import { Button } from 'react-native'; 
 import { Feather } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
-export default function App() {
+const Stack = createStackNavigator();
+const logout = (navigation) => {
+  navigation.navigate('SignIn');
+};
+const screenOptions = ({ navigation }) => ({
+  headerRight: () => (
+    <Button onPress={() => logout(navigation)} title="Log Out" color="#000" />
+  ),
+});
+
+// Define the main tab navigator as a separate component
+function MainTabNavigator() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Home" options={
+    <Tab.Navigator screenOptions={screenOptions}>
+          <Tab.Screen name="Home" options={
           {
             tabBarShowLabel: false,
             tabBarIcon: ({ color, size }) => (
@@ -29,7 +40,7 @@ export default function App() {
           }
         
         } component={HomeScreen} />
-        <Tab.Screen name="Savec Activities" options={
+        <Tab.Screen name="Saved Activities" options={
           {
             headerShown: false,
             tabBarShowLabel: false,
@@ -67,7 +78,23 @@ export default function App() {
           }
 
         } component={AccountScreen} />
-      </Tab.Navigator>
+
+    </Tab.Navigator>
+  );
+}
+function SignInStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <SignInStack />
     </NavigationContainer>
   );
 }

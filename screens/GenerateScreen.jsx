@@ -6,11 +6,16 @@ function GenerateScreen() {
     const [price, setPrice] = useState(10);
     const [numberOfPeople, setNumberOfPeople] = useState(1);
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [timeOfDay, setTimeOfDay] = useState(12); // New state for time of the day
 
-    const locations = ['Home', 'School', 'Forest', 'Beach', 'Park'];
+    const locations = ['Home', 'School', 'Forest', 'Beach', 'Park', 'Lake'];
 
     const selectLocation = (location) => {
         setSelectedLocation(location);
+    };
+
+    const handleGeneratePress = () => {
+        console.log('Generate button pressed');
     };
 
     return (
@@ -33,7 +38,7 @@ function GenerateScreen() {
                 </View>
 
                 <View style={styles.sliderContainer}>
-                    <Text style={styles.label}>Price: ${price}</Text>
+                    <Text style={styles.label}>Budget: ${price}</Text>
                     <Slider
                         style={styles.slider}
                         value={price}
@@ -56,7 +61,24 @@ function GenerateScreen() {
                     />
                 </View>
 
-                {/* Additional content and buttons */}
+                <View style={styles.sliderContainer}>
+                    <Text style={styles.label}>Time of the Day: {timeOfDay}h</Text>
+                    <Slider
+                        style={styles.slider}
+                        value={timeOfDay}
+                        onValueChange={setTimeOfDay}
+                        minimumValue={0}
+                        maximumValue={24}
+                        step={1}
+                    />
+                </View>
+
+                <TouchableOpacity 
+                    style={styles.generateButton} 
+                    onPress={handleGeneratePress}
+                >
+                    <Text style={styles.generateButtonText}>Generate</Text>
+                </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
     );
@@ -104,6 +126,18 @@ const styles = StyleSheet.create({
     },
     slider: {
         height: 40,
+    },
+    generateButton: {
+        backgroundColor: '#000', // Black background
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    generateButtonText: {
+        color: '#fff', // White text color
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 
