@@ -98,7 +98,8 @@ function GenerateScreen({navigation}) {
           const activityData = JSON.parse(response);
           const activityId = await createActivity(user.uid, activityData);
           console.log(`Activity created with ID: ${activityId}`);
-          navigation.navigate("DetailsScreen", { response });
+          activityData.id = activityId;
+          navigation.navigate("DetailsScreen", { response: JSON.stringify(activityData) });
           console.log(response);
         })
         .catch((error) => {

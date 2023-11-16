@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { markActivityAsCompleted } from '../services/activity'; // Adjust the path as necessary
 
 function ActivityScreen({ route }) {
+  console.log(route)
   const { response } = route.params; // Assuming response is already a JSON string
   const activityDetails = JSON.parse(response); // Parsing the JSON string to an object
   const navigation = useNavigation();

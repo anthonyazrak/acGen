@@ -3,32 +3,43 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { auth } from "../services/firebase";
 import { getNotCompletedActivitiesByUid } from '../services/activity'; 
+import { useFocusEffect } from '@react-navigation/native';
 
 function SavedScreen({ navigation }) {
   const [user, setUser] = useState(null);
-  const [activities, setActivities] = useState([]); // State to store activities
+  const [activities, setActivities] = useState([]);
+
+  const fetchActivities = async (uid) => {
+    try {
+      const fetchedActivities = await getNotCompletedActivitiesByUid(uid);
+      setActivities(fetchedActivities);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+    }
+  };
 
   useEffect(() => {
     // Firebase Auth state observer
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
-        try {
-          const fetchedActivities = await getNotCompletedActivitiesByUid(user.uid);
-          setActivities(fetchedActivities);
-        } catch (error) {
-          console.error("Error fetching activities:", error);
-        }
       } else {
-        // Redirect to the root path if there's no signed-in user
         navigation.navigate("MainTabs");
       }
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+
+  // Fetch activities when the screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user) {
+        fetchActivities(user.uid);
+      }
+    }, [user])
+  );
+
 
 return (
   <View style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}>
