@@ -7,7 +7,6 @@ import HomeScreen from './screens/HomeScreen';
 import SavedScreen from './screens/SavedScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import GenerateScreen from './screens/GenerateScreen';
-import PictureScreen from './screens/PictureScreen';
 import AccountScreen from './screens/AccountScreen';
 import StackNavigation from './StackNavigation';
 import { Button } from 'react-native'; 
@@ -61,15 +60,6 @@ function MainTabNavigator() {
           }
         
         } component={GenerateScreen} />
-        <Tab.Screen name="Picture" options={
-          {
-            tabBarShowLabel: false,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="images-outline" size={24} color="black" />
-            ),
-          }
-
-        } component={PictureScreen} />
         <Tab.Screen name="Account" options={
           {
             tabBarShowLabel: false,

@@ -9,6 +9,8 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { LogBox } from "react-native";
+LogBox.ignoreLogs(['Key "cancelled" in the image picker result is deprecated']);
 
 function HomeScreen() {
   const [user, setUser] = useState(null); // To store the authenticated user
@@ -44,8 +46,7 @@ function HomeScreen() {
 
     console.log(result); // Log the result to see what data is returned
 
-    if (!result.cancelled) {
-      // Extract the uri from the first item in the assets array
+    if (!result.canceled) {
       const uri = result.assets[0].uri;
       console.log("Updating activity with ID:", id, "with URI:", uri); // Log the URI being set
 

@@ -1,9 +1,7 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-
-function SavedScreen({ navigation }) {
-  const [user, setUser] = useState(null); // To store the authenticated user
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useContext } from 'react';
 
   useEffect(() => {
     // Firebase Auth state observer

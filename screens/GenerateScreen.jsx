@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 import Slider from "@react-native-community/slider";
+import { useContext } from 'react';
+
 
 function GenerateScreen() {
   const API_KEY = "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";
