@@ -11,6 +11,7 @@ import Slider from "@react-native-community/slider";
 
 function GenerateScreen() {
   const API_KEY = "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";
+  const [user, setUser] = useState(null); // To store the authenticated user
 
   const [price, setPrice] = useState(10);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
@@ -20,6 +21,21 @@ function GenerateScreen() {
   const [response, setResponse] = useState("");
   const locations = ["Home", "School", "Forest", "Beach", "Park", "Lake"];
 
+  useEffect(() => {
+    // Firebase Auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        // Redirect to the root path if there's no signed-in user
+        navigation.navigate("MainTabs");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
   const selectLocation = (location) => {
     setSelectedLocation(location);
   };

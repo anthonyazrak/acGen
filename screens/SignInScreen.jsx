@@ -26,7 +26,7 @@ function SignInScreen({ navigation }) {
         setUser(user);
       } else {
         // Redirect to the root path if there's no signed-in user
-        navigation.navigate("MainTabs");
+        navigation.navigate("SignIn");
       }
     });
 
@@ -42,7 +42,7 @@ function SignInScreen({ navigation }) {
   };
 
   const handleSignUpNavigation = () => {
-    navigation.navigate('SignUp');
+    navigation.navigate("SignUp");
   };
 
   return (

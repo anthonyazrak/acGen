@@ -18,14 +18,25 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDApWK94fGn-R32hR6habosGfBq-5lP5vI",
-  authDomain: "subhub-148f9.firebaseapp.com",
-  projectId: "subhub-148f9",
-  storageBucket: "subhub-148f9.appspot.com",
-  messagingSenderId: "330108131545",
-  appId: "1:330108131545:web:a960c4d2e31dd4877c46c8",
-  measurementId: "G-ZJQ2VS4TY0",
+  apiKey: "AIzaSyDFebTVYTFPyMkCNENzPmEO4hrB8ac-YTc",
+  authDomain: "bigbrother-4321.firebaseapp.com",
+  databaseURL: "https://bigbrother-4321.firebaseio.com",
+  projectId: "bigbrother-4321",
+  storageBucket: "bigbrother-4321.appspot.com",
+  messagingSenderId: "555916862823",
+  appId: "1:555916862823:web:d13134935cf32cb92f7bc2",
+  measurementId: "G-CGJQQ8EVKS",
 };
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDApWK94fGn-R32hR6habosGfBq-5lP5vI",
+//   authDomain: "subhub-148f9.firebaseapp.com",
+//   projectId: "subhub-148f9",
+//   storageBucket: "subhub-148f9.appspot.com",
+//   messagingSenderId: "330108131545",
+//   appId: "1:330108131545:web:a960c4d2e31dd4877c46c8",
+//   measurementId: "G-ZJQ2VS4TY0",
+// };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -51,6 +62,7 @@ const signInWithGoogle = async () => {
     alert(err.message);
   }
 };
+
 const logInWithEmailAndPassword = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -60,15 +72,24 @@ const logInWithEmailAndPassword = async (email, password) => {
   }
 };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
+const registerWithEmailAndPassword = async (auth, formData) => {
+  console.log(formData);
   try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
+    const res = await createUserWithEmailAndPassword(
+      auth,
+      formData.email,
+      formData.password
+    );
     const user = res.user;
     await addDoc(collection(db, "users"), {
       uid: user.uid,
-      name,
       authProvider: "local",
-      email,
+      email: formData.email,
+      password: formData.password,
+      city: formData.city,
+      age: formData.age,
+      name: formData.name,
+      lastName: formData.name,
     });
   } catch (err) {
     console.error(err);

@@ -1,16 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
+import {
+  signInWithGoogle,
+  logInWithEmailAndPassword,
+  registerWithEmailAndPassword,
+  sendPasswordReset,
+  auth,
+} from "../services/firebase";
 
 function SignUpScreen({ navigation }) {
   const [formData, setFormData] = useState({
-    name: '',
-    lastName: '',
-    email: '',
-    age: '',
-    city: '',
+    name: "",
+    lastName: "",
+    email: "",
+    age: "",
+    city: "",
+    password: "",
   });
   const [favoriteActivities, setFavoriteActivities] = useState([]);
-  const [currentActivity, setCurrentActivity] = useState('');
+  const [currentActivity, setCurrentActivity] = useState("");
+  const [user, setUser] = useState(null); // To store the authenticated user
+
+  useEffect(() => {
+    // Firebase Auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        // Redirect to the root path if there's no signed-in user
+        // navigation.navigate("SignIn");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const handleInputChange = (text, field) => {
     setFormData({ ...formData, [field]: text });
@@ -19,15 +52,12 @@ function SignUpScreen({ navigation }) {
   const addActivity = () => {
     if (currentActivity.trim()) {
       setFavoriteActivities([...favoriteActivities, currentActivity.trim()]);
-      setCurrentActivity('');
+      setCurrentActivity("");
     }
   };
 
-  const submitForm = () => {
-    // Submit form logic here
-    console.log(formData, favoriteActivities);
-    navigation.navigate('MainTabs');
-    // You would typically send this data to a backend server for processing
+  const handleSignUpWithEmailAndPassword = () => {
+    registerWithEmailAndPassword(auth, formData);
   };
 
   return (
@@ -37,31 +67,37 @@ function SignUpScreen({ navigation }) {
         style={styles.input}
         placeholder="Name"
         value={formData.name}
-        onChangeText={(text) => handleInputChange(text, 'name')}
+        onChangeText={(text) => handleInputChange(text, "name")}
       />
       <TextInput
         style={styles.input}
         placeholder="Last Name"
         value={formData.lastName}
-        onChangeText={(text) => handleInputChange(text, 'lastName')}
+        onChangeText={(text) => handleInputChange(text, "lastName")}
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={formData.email}
-        onChangeText={(text) => handleInputChange(text, 'email')}
+        onChangeText={(text) => handleInputChange(text, "email")}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={formData.password}
+        onChangeText={(text) => handleInputChange(text, "password")}
       />
       <TextInput
         style={styles.input}
         placeholder="Age"
         value={formData.age}
-        onChangeText={(text) => handleInputChange(text, 'age')}
+        onChangeText={(text) => handleInputChange(text, "age")}
       />
       <TextInput
         style={styles.input}
         placeholder="City"
         value={formData.city}
-        onChangeText={(text) => handleInputChange(text, 'city')}
+        onChangeText={(text) => handleInputChange(text, "city")}
       />
 
       <View style={styles.activityInputContainer}>
@@ -82,7 +118,11 @@ function SignUpScreen({ navigation }) {
         ))}
       </View>
 
-      <Button title="Sign Up" onPress={submitForm} color="#007AFF" />
+      <Button
+        title="Sign Up"
+        onPress={handleSignUpWithEmailAndPassword}
+        color="#007AFF"
+      />
     </ScrollView>
   );
 }
@@ -94,23 +134,23 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    marginTop : 20,
-    alignSelf: 'center', // Center title text horizontally
+    marginTop: 20,
+    alignSelf: "center", // Center title text horizontally
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
     fontSize: 16,
   },
   activityInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 15,
   },
   activityInput: {
@@ -118,20 +158,20 @@ const styles = StyleSheet.create({
     marginRight: 10, // Add margin between the input and the button
   },
   activitiesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
     marginBottom: 20,
   },
   activityButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 10,
     borderRadius: 10,
     marginRight: 10,
     marginBottom: 10,
   },
   activityButtonText: {
-    color: 'white',
+    color: "white",
   },
   // ... other styles ...
 });
