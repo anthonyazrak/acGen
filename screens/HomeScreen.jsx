@@ -82,7 +82,7 @@ function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <h2>Welcome, {user?.email}!</h2>
+      <Text>Welcome, {user?.email}!</Text>
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}

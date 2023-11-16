@@ -24,7 +24,16 @@ const getActivitiesByUid = async (uid) => {
     const activities = [];
 
     querySnapshot.forEach((doc) => {
-      activities.push({ id: doc.id, ...doc.data() });
+      // Destructure the data from doc.data() and rename fields as needed
+      const { Title: title, Description: description, Material: materialsNeeded } = doc.data();
+
+      // Push the activity in the desired format
+      activities.push({
+        id: doc.id, // Firestore document ID
+        title,
+        description,
+        materialsNeeded,
+      });
     });
 
     return activities;

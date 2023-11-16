@@ -10,8 +10,9 @@ import {
 import Slider from "@react-native-community/slider";
 import { useContext } from "react";
 import { auth } from "../services/firebase";
+import { createActivity } from '../services/activity'; 
 
-function GenerateScreen() {
+function GenerateScreen({navigation}) {
   const API_KEY = "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";
   const [user, setUser] = useState(null); // To store the authenticated user
 
@@ -89,13 +90,15 @@ function GenerateScreen() {
   const handleGenerateActivity = async () => {
     try {
       setLoadingActivity(true);
-      const prompt = `Suggest an activity for me. My current setting is ${selectedLocation}, my price range for budget is ${price}. and I am in a group of ${numberOfPeople}.`;
+      const prompt = `I am currently at ${selectedLocation} with a budget of ${price} and in a group of ${numberOfPeople}. Can you suggest an activity for us? Please provide the response in a JSON format with the exact fields "Title", "Material", and "Description". The "Description" and "Material" fields need to have only one string each and have steps numbered and each step on a new line`;
       console.log(prompt);
       await sendPromptToChatGPT(prompt)
-        .then((response) => {
+        .then(async (response) => {
           setResponse(response);
-          navigation.navigate("ActivityScreen", { response });
-
+          const activityData = JSON.parse(response);
+          const activityId = await createActivity(user.uid, activityData);
+          console.log(`Activity created with ID: ${activityId}`);
+          navigation.navigate("DetailsScreen", { response });
           console.log(response);
         })
         .catch((error) => {
