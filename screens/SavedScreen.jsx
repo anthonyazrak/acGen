@@ -2,7 +2,7 @@ import React, { useState, useEffect }  from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { auth } from "../services/firebase";
-import { getActivitiesByUid } from '../services/activity'; 
+import { getNotCompletedActivitiesByUid } from '../services/activity'; 
 
 function SavedScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -14,7 +14,7 @@ function SavedScreen({ navigation }) {
       if (user) {
         setUser(user);
         try {
-          const fetchedActivities = await getActivitiesByUid(user.uid);
+          const fetchedActivities = await getNotCompletedActivitiesByUid(user.uid);
           setActivities(fetchedActivities);
         } catch (error) {
           console.error("Error fetching activities:", error);
@@ -37,6 +37,7 @@ return (
         <TouchableOpacity
           onPress={() => {
             const activityDetails = {
+              id: item.id,
               Title: item.title,
               Material: item.materialsNeeded,
               Description: item.description,

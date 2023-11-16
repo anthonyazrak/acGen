@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect }  from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Button,
 } from "react-native";
+import { auth } from "../services/firebase";
 
 function AccountScreen() {
   const [activities, setActivities] = useState([

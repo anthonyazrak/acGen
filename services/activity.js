@@ -15,38 +15,53 @@ import {
 } from "firebase/firestore";
 
 // Fetch all activities created by a specific UID for landing page
-const getActivitiesByUid = async (uid) => {
+const getCompletedActivitiesByUid = async (uid) => {
   try {
     const activityRef = collection(db, "activities");
-    const q = query(activityRef, where("userId", "==", uid));
+    const q = query(activityRef, where("userId", "==", uid), where("Completed", "==", true));
     const querySnapshot = await getDocs(q);
 
-    const activities = [];
+    const completedActivities = [];
 
     querySnapshot.forEach((doc) => {
-      // Destructure the data from doc.data() and rename fields as needed
       const { Title: title, Description: description, Material: materialsNeeded } = doc.data();
-
-      // Push the activity in the desired format
-      activities.push({
-        id: doc.id, // Firestore document ID
-        title,
-        description,
-        materialsNeeded,
-      });
+      completedActivities.push({ id: doc.id, title, description, materialsNeeded });
     });
 
-    return activities;
+    return completedActivities;
   } catch (error) {
-    console.error("Error fetching activities:", error);
+    console.error("Error fetching completed activities:", error);
     throw error;
   }
 };
 
+const getNotCompletedActivitiesByUid = async (uid) => {
+  try {
+    const activityRef = collection(db, "activities");
+    const q = query(activityRef, where("userId", "==", uid), where("Completed", "==", false));
+    const querySnapshot = await getDocs(q);
+
+    const notCompletedActivities = [];
+
+    querySnapshot.forEach((doc) => {
+      const { Title: title, Description: description, Material: materialsNeeded } = doc.data();
+      notCompletedActivities.push({ id: doc.id, title, description, materialsNeeded });
+    });
+
+    return notCompletedActivities;
+  } catch (error) {
+    console.error("Error fetching not completed activities:", error);
+    throw error;
+  }
+};
+
+
 // Store an acivity generated from ChatGPT API
 const createActivity = async (userId, activityData) => {
-  const newActivityData = { ...activityData };
-
+  const newActivityData = {
+    ...activityData,
+    Completed: false // Adding the 'Completed' field with a default value of false
+  };
   try {
     // Create the activity document in Firestore
     const docRef = await addDoc(collection(db, "activities"), {
@@ -89,4 +104,17 @@ const getActivityById = async (activityId) => {
   }
 };
 
-export { createActivity, deleteActivity, getActivitiesByUid, getActivityById };
+const markActivityAsCompleted = async (activityId) => {
+  try {
+    const activityRef = doc(db, "activities", activityId);
+    await updateDoc(activityRef, {
+      Completed: true
+    });
+    console.log("Activity marked as completed:", activityId);
+  } catch (error) {
+    console.error("Error marking activity as completed:", error);
+    throw error;
+  }
+};
+
+export { markActivityAsCompleted, createActivity, deleteActivity, getCompletedActivitiesByUid, getNotCompletedActivitiesByUid, getActivityById };

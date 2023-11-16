@@ -1,44 +1,45 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  Platform,
-  Alert,
-} from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity, Alert, Platform, RefreshControl} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import { auth } from "../services/firebase";
+import { getCompletedActivitiesByUid } from "../services/activity"; // Adjust the path as necessary
+import { StyleSheet } from "react-native";
 
-LogBox.ignoreLogs(['Key "cancelled" in the image picker result is deprecated']);
-
-function HomeScreen() {
-  const [user, setUser] = useState(null); // To store the authenticated user
-
-  const [activities, setActivities] = useState([
-    { id: "1", name: "Painting Alone", imageUri: null },
-    { id: "2", name: "Football with Friends", imageUri: null },
-    // ... other activities
-  ]);
-
+function HomeScreen({navigation}) {
+  const [user, setUser] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // New state for refresh control
+  const fetchActivities = async () => {
+    if (user && user.uid) {
+      try {
+        const fetchedActivities = await getCompletedActivitiesByUid(user.uid);
+        setActivities(fetchedActivities);
+      } catch (error) {
+        console.error("Error fetching completed activities:", error);
+      }
+    }
+  };
   useEffect(() => {
-    // Firebase Auth state observer
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        // navigation.navigate("DetailsScreen");
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        fetchActivities();
       } else {
-        // Redirect to the root path if there's no signed-in user
-        navigation.navigate("SignIn");
+        // Handle no user signed in
       }
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+  useEffect(() => {
+    fetchActivities();
+  }, [user]);
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await fetchActivities();
+    setRefreshing(false);
+  }, [user]);
 
   useEffect(() => {
     (async () => {
@@ -81,38 +82,78 @@ function HomeScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Text>Welcome, {user?.email}!</Text>
+    <View style={styles.container}>
+      <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={{ alignItems: "center", margin: 20 }}>
+          <View style={styles.imageContainer}>
             {item.imageUri ? (
-              <Image
-                source={{ uri: item.imageUri }}
-                style={{ width: 200, height: 200 }}
-              />
+              <Image source={{ uri: item.imageUri }} style={styles.image} />
             ) : (
-              <TouchableOpacity
-                onPress={() => pickImage(item.id)}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: 200,
-                  width: 200,
-                  backgroundColor: "#ddd",
-                }}
-              >
+              <TouchableOpacity onPress={() => pickImage(item.id)} style={styles.imageButton}>
                 <Text>Add a picture</Text>
               </TouchableOpacity>
             )}
-            <Text style={{ marginTop: 10 }}>{item.name}</Text>
+                  <TouchableOpacity 
+        onPress={() => {
+          const activityDetails = {
+            id: item.id,
+            Title: item.title,
+            Material: item.materialsNeeded,
+            Description: item.description,
+          };
+          navigation.navigate("DetailsScreen", { response: JSON.stringify(activityDetails) });
+        }}>
+        <Text style={styles.activityTitle}>{item.title}</Text>
+      </TouchableOpacity>
           </View>
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 20,
+    color: "#333",
+    textAlign: "center",
+  },
+  imageContainer: {
+    alignItems: "center",
+    margin: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
+  imageButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 200,
+    width: 200,
+    backgroundColor: "#ddd",
+  },
+  activityTitle: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+  },
+});
 export default HomeScreen;
