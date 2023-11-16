@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { auth } from "../services/firebase";
 
-function DetailsScreen({ route }) {
-  // Extract the passed parameters from the route
-  const { title, description, materialsNeeded } = route.params;
+function ActivityScreen({ route }) {
+  const { response } = route.params;
   const [user, setUser] = useState(null); // To store the authenticated user
 
   useEffect(() => {
@@ -13,7 +13,7 @@ function DetailsScreen({ route }) {
         setUser(user);
       } else {
         // Redirect to the root path if there's no signed-in user
-        navigation.navigate("MainTabs");
+        // navigation.navigate("SignIn");
       }
     });
 
@@ -23,12 +23,22 @@ function DetailsScreen({ route }) {
   }, []);
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: 24 }}>{title}</Text>
-      <Text style={{ fontSize: 18, marginVertical: 10 }}>{description}</Text>
-      <Text style={{ fontSize: 16 }}>{materialsNeeded}</Text>
+    <View style={styles.container}>
+      <Text style={styles.activityText}>{response}</Text>
     </View>
   );
 }
 
-export default DetailsScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activityText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});
+
+export default ActivityScreen;

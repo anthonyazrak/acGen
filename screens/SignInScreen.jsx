@@ -19,9 +19,25 @@ function SignInScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null); // To store the authenticated user
 
+  useEffect(() => {
+    // Firebase Auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+        navigation.navigate("MainTabs");
+      } else {
+        // navigation.navigate("SignIn");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const handleSignIn = () => {
     // Insert sign-in logic here
-    navigation.navigate("MainTabs");
+    logInWithEmailAndPassword(email, password);
   };
 
   const handleSignUpNavigation = () => {

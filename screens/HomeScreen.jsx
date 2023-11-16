@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
+import { auth } from "../services/firebase";
+
 LogBox.ignoreLogs(['Key "cancelled" in the image picker result is deprecated']);
 
 function HomeScreen() {
@@ -20,6 +22,23 @@ function HomeScreen() {
     { id: "2", name: "Football with Friends", imageUri: null },
     // ... other activities
   ]);
+
+  useEffect(() => {
+    // Firebase Auth state observer
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+        // navigation.navigate("DetailsScreen");
+      } else {
+        // Redirect to the root path if there's no signed-in user
+        navigation.navigate("SignIn");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -63,6 +82,7 @@ function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
+      <h2>Welcome, {user?.email}!</h2>
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}

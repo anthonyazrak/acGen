@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { useContext } from 'react';
-
+import { useContext } from "react";
+import { auth } from "../services/firebase";
 
 function GenerateScreen() {
   const API_KEY = "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";
@@ -94,6 +94,8 @@ function GenerateScreen() {
       await sendPromptToChatGPT(prompt)
         .then((response) => {
           setResponse(response);
+          navigation.navigate("ActivityScreen", { response });
+
           console.log(response);
         })
         .catch((error) => {

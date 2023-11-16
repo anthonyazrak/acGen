@@ -23,6 +23,7 @@ function SignUpScreen({ navigation }) {
     email: "",
     age: "",
     city: "",
+    confirmPassword: "", // New password input
     password: "",
   });
   const [favoriteActivities, setFavoriteActivities] = useState([]);
@@ -33,10 +34,12 @@ function SignUpScreen({ navigation }) {
     // Firebase Auth state observer
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
         setUser(user);
+        navigation.navigate("MainTabs");
       } else {
         // Redirect to the root path if there's no signed-in user
-        // navigation.navigate("SignIn");
+        // navigation.navigate("SignUp");
       }
     });
 
@@ -57,7 +60,16 @@ function SignUpScreen({ navigation }) {
   };
 
   const handleSignUpWithEmailAndPassword = () => {
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     registerWithEmailAndPassword(auth, formData);
+  };
+
+  const back = () => {
+    navigation.navigate("SignIn");
   };
 
   return (
@@ -83,9 +95,17 @@ function SignUpScreen({ navigation }) {
       />
       <TextInput
         style={styles.input}
+        secureTextEntry={true}
         placeholder="Password"
         value={formData.password}
         onChangeText={(text) => handleInputChange(text, "password")}
+      />
+      <TextInput
+        style={styles.input}
+        secureTextEntry={true}
+        placeholder="Confirm Password"
+        value={formData.confirmPassword}
+        onChangeText={(text) => handleInputChange(text, "confirmPassword")}
       />
       <TextInput
         style={styles.input}
@@ -123,6 +143,9 @@ function SignUpScreen({ navigation }) {
         onPress={handleSignUpWithEmailAndPassword}
         color="#007AFF"
       />
+      <View style={{ marginTop: "10px" }}>
+        <Button title="Back to Sign In" onPress={back} color="#007AFF" />
+      </View>
     </ScrollView>
   );
 }
@@ -144,7 +167,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 10,
     fontSize: 16,
   },
   activityInputContainer: {
@@ -173,7 +196,6 @@ const styles = StyleSheet.create({
   activityButtonText: {
     color: "white",
   },
-  // ... other styles ...
 });
 
 export default SignUpScreen;

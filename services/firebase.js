@@ -106,8 +106,8 @@ const sendPasswordReset = async (email) => {
     alert(err.message);
   }
 };
-const logout = () => {
-  signOut(auth);
+const logOut = async () => {
+  await signOut(auth);
 };
 
 export {
@@ -117,5 +117,5 @@ export {
   logInWithEmailAndPassword,
   registerWithEmailAndPassword,
   sendPasswordReset,
-  logout,
+  logOut,
 };
