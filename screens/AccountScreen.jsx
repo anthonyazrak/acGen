@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -9,62 +9,118 @@ import {
   StyleSheet,
   Button,
 } from "react-native";
-import { auth } from "../services/firebase";
+import { auth, fetchUserDetails, updateUserDetails } from "../services/firebase";
+import { useFocusEffect } from '@react-navigation/native';
 
-function AccountScreen() {
-  const [activities, setActivities] = useState([
-    "Paint",
-    "Football",
-    "Party",
-    "Read",
-  ]);
+function AccountScreen({ navigation }) {
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [city, setCity] = useState("");
+  const [activities, setActivities] = useState([]);
   const [newActivity, setNewActivity] = useState("");
-  const [user, setUser] = useState(null); // To store the authenticated user
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Firebase Auth state observer
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
       } else {
-        // Redirect to the root path if there's no signed-in user
         navigation.navigate("MainTabs");
       }
     });
-
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user) {
+        // Directly call fetchUserDetails here
+        console.log(user)
+        console.log(user.uid)
+        fetchUserDetails(user.uid).then(userDetails => {
+          setName(userDetails.name);
+          setLastName(userDetails.lastName);
+          setAge(userDetails.age.toString());
+          setCity(userDetails.city);
+          setActivities(userDetails.activities || []); 
+        }).catch(error => console.error("Error fetching user details:", error));
+      }
+    }, [user])
+  );
+
 
   const addActivity = () => {
     if (newActivity) {
       setActivities([...activities, newActivity]);
-      setNewActivity(""); // Reset the input field
+      setNewActivity("");
     }
   };
 
   const removeActivity = (index) => {
     setActivities(activities.filter((_, i) => i !== index));
   };
+
+  const handleSave = async () => {
+    if (user) {
+      const updatedDetails = {
+        name: name,
+        lastName: lastName,
+        age: age, // Make sure this is stored as a number if your database schema expects a number
+        city: city,
+        activities: activities // Include the activities array
+        // Include other fields as necessary
+      };
+  
+      try {
+        await updateUserDetails(user.uid, updatedDetails);
+        console.log("User details updated successfully");
+        // Optionally, show a success message to the user
+      } catch (error) {
+        console.error("Error updating user details:", error);
+        // Optionally, show an error message to the user
+      }
+    }
+  };
+  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
-          <View style={styles.header}>
+          {/* <View style={styles.header}>
             <Text style={styles.headerTitle}>Account</Text>
-          </View>
+          </View> */}
           <View style={styles.form}>
             <Text>Name</Text>
-            <TextInput style={styles.input} />
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Your name"
+            />
             <Text>Last Name</Text>
-            <TextInput style={styles.input} />
+            <TextInput
+              style={styles.input}
+              value={lastName}
+              onChangeText={setLastName}
+              placeholder="Your last name"
+            />
             <Text>Age</Text>
-            <TextInput style={styles.input} keyboardType="numeric" />
-            <Text>Gender</Text>
-            <TextInput style={styles.input} />
+            <TextInput
+              style={styles.input}
+              value={age}
+              onChangeText={setAge}
+              keyboardType="numeric"
+              placeholder="Your age"
+            />
             <Text>City</Text>
-            <TextInput style={styles.input} />
+            <TextInput
+              style={styles.input}
+              value={city}
+              onChangeText={setCity}
+              placeholder="Your city"
+            />
             <Text>Favorite Activities:</Text>
             {activities.map((activity, index) => (
               <View key={index} style={styles.activityContainer}>
@@ -84,8 +140,8 @@ function AccountScreen() {
               placeholder="Add new activity..."
             />
             <Button title="Add Activity" onPress={addActivity} />
-            <TouchableOpacity style={styles.saveButton}>
-              <Text>Save</Text>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>

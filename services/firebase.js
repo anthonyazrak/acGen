@@ -15,6 +15,9 @@ import {
   collection,
   where,
   addDoc,
+  doc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -28,15 +31,6 @@ const firebaseConfig = {
   measurementId: "G-CGJQQ8EVKS",
 };
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDApWK94fGn-R32hR6habosGfBq-5lP5vI",
-//   authDomain: "subhub-148f9.firebaseapp.com",
-//   projectId: "subhub-148f9",
-//   storageBucket: "subhub-148f9.appspot.com",
-//   messagingSenderId: "330108131545",
-//   appId: "1:330108131545:web:a960c4d2e31dd4877c46c8",
-//   measurementId: "G-ZJQ2VS4TY0",
-// };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -110,6 +104,44 @@ const logOut = async () => {
   await signOut(auth);
 };
 
+const fetchUserDetails = async (uid) => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0]; // Assuming 'uid' is unique and only returns one result
+      return userDoc.data();
+    } else {
+      console.log("No user found with UID:", uid);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    throw error;
+  }
+};
+const updateUserDetails = async (uid, userDetails) => {
+  try {
+    // Query to find the user document based on the uid field
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Assuming uid is unique and only returns one result
+      const userDocRef = querySnapshot.docs[0].ref;
+      await updateDoc(userDocRef, userDetails);
+      console.log("User details updated successfully");
+    } else {
+      console.log("No user found with UID:", uid);
+    }
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    throw error;
+  }
+};
 export {
   auth,
   db,
@@ -118,4 +150,6 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logOut,
+  fetchUserDetails,
+  updateUserDetails
 };
