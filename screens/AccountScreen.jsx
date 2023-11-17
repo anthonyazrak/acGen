@@ -42,8 +42,6 @@ function AccountScreen({ navigation }) {
         // Directly call fetchUserDetails here
         fetchUserDetails(user.uid)
           .then((userDetails) => {
-            console.log("userDetails");
-            console.log(userDetails);
             setName(userDetails.name);
             setLastName(userDetails.lastName);
             setAge(userDetails.age.toString());

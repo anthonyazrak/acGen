@@ -86,7 +86,6 @@ function HomeScreen({ navigation }) {
       }
     })();
   }, []);
-  console.log(activities);
 
   const pickImage = async (id) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -96,7 +95,6 @@ function HomeScreen({ navigation }) {
       quality: 1,
     });
 
-    console.log(result); // Log the result to see what data is returned
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
