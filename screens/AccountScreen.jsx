@@ -9,8 +9,12 @@ import {
   StyleSheet,
   Button,
 } from "react-native";
-import { auth, fetchUserDetails, updateUserDetails } from "../services/firebase";
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  auth,
+  fetchUserDetails,
+  updateUserDetails,
+} from "../services/firebase";
+import { useFocusEffect } from "@react-navigation/native";
 
 function AccountScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -26,7 +30,7 @@ function AccountScreen({ navigation }) {
       if (user) {
         setUser(user);
       } else {
-        navigation.navigate("MainTabs");
+        navigation.navigate("SignIn");
       }
     });
     return () => unsubscribe();
@@ -36,17 +40,20 @@ function AccountScreen({ navigation }) {
     React.useCallback(() => {
       if (user) {
         // Directly call fetchUserDetails here
-        fetchUserDetails(user.uid).then(userDetails => {
-          setName(userDetails.name);
-          setLastName(userDetails.lastName);
-          setAge(userDetails.age.toString());
-          setCity(userDetails.city);
-          setActivities(userDetails.activities || []); 
-        }).catch(error => console.error("Error fetching user details:", error));
+        fetchUserDetails(user.uid)
+          .then((userDetails) => {
+            setName(userDetails.name);
+            setLastName(userDetails.lastName);
+            setAge(userDetails.age.toString());
+            setCity(userDetails.city);
+            setActivities(userDetails.activities || []);
+          })
+          .catch((error) =>
+            console.error("Error fetching user details:", error)
+          );
       }
     }, [user])
   );
-
 
   const addActivity = () => {
     if (newActivity) {
@@ -66,10 +73,10 @@ function AccountScreen({ navigation }) {
         lastName: lastName,
         age: age, // Make sure this is stored as a number if your database schema expects a number
         city: city,
-        activities: activities // Include the activities array
+        activities: activities, // Include the activities array
         // Include other fields as necessary
       };
-  
+
       try {
         await updateUserDetails(user.uid, updatedDetails);
         console.log("User details updated successfully");
@@ -80,7 +87,6 @@ function AccountScreen({ navigation }) {
       }
     }
   };
-  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -137,7 +143,10 @@ function AccountScreen({ navigation }) {
               onChangeText={setNewActivity}
               placeholder="Add new activity..."
             />
-            <Button title="Add Activity" onPress={addActivity} />
+            {/* <Button title="Add Activity" onPress={addActivity} /> */}
+            <TouchableOpacity style={styles.saveButton} onPress={addActivity}>
+              <Text style={styles.saveButtonText}>Add Activity</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
@@ -214,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#5c6bc0",
     borderRadius: 25,
     paddingVertical: 15,
+    margin: 10,
     alignItems: "center",
   },
   saveButtonText: {

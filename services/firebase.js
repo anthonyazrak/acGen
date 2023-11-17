@@ -111,6 +111,7 @@ const fetchUserDetails = async (uid) => {
 
     if (!querySnapshot.empty) {
       const userDoc = querySnapshot.docs[0]; // Assuming 'uid' is unique and only returns one result
+      console.log(userDoc);
       return userDoc.data();
     } else {
       console.log("No user found with UID:", uid);
