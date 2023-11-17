@@ -6,6 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  TextInput,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useContext } from "react";
@@ -132,6 +133,12 @@ function GenerateScreen({ navigation }) {
               <Text style={styles.locationText}>{location}</Text>
             </TouchableOpacity>
           ))}
+          <TextInput
+            style={styles.locationInput}
+            placeholder="Enter custom location"
+            value={selectedLocation}
+            onChangeText={(text) => selectLocation(text)}
+          />
         </View>
 
         <View style={styles.sliderContainer}>
@@ -245,6 +252,19 @@ const styles = StyleSheet.create({
     color: "#ffffff", // White text color
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  locationInput: {
+    height: 45,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 8,
+    alignContent: "center",
+    alignItems: "center",
+    textAlign: "center",
   },
 });
 

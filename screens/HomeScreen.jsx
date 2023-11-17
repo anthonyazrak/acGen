@@ -95,20 +95,19 @@ function HomeScreen({ navigation }) {
       quality: 1,
     });
 
-
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       // console.log("Updating activity with ID:", id, "with URI:", uri); // Log the URI being set
       addImageDocumentToDoc(id, uri);
 
-      // setActivities((currentActivities) =>
-      //   currentActivities.map((activity) => {
-      //     if (activity.id === id) {
-      //       return { ...activity, imageUri: uri };
-      //     }
-      //     return activity;
-      //   })
-      // );
+      setActivities((currentActivities) =>
+        currentActivities.map((activity) => {
+          if (activity.id === id) {
+            return { ...activity, imageUri: uri };
+          }
+          return activity;
+        })
+      );
     }
   };
 
