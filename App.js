@@ -16,6 +16,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { auth, logOut } from "./services/firebase";
+import idea from "./assets/idea.svg";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -63,7 +64,7 @@ function MainTabNavigator() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="bolt" size={48} color="black" />
+            <img style={{ height: "35px" }} src={idea} />
           ),
         }}
         component={GenerateScreen}

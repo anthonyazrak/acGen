@@ -31,7 +31,6 @@ const firebaseConfig = {
   measurementId: "G-CGJQQ8EVKS",
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -142,14 +141,16 @@ const updateUserDetails = async (uid, userDetails) => {
     throw error;
   }
 };
+
 export {
   auth,
   db,
+  app,
   signInWithGoogle,
   logInWithEmailAndPassword,
   registerWithEmailAndPassword,
   sendPasswordReset,
   logOut,
   fetchUserDetails,
-  updateUserDetails
+  updateUserDetails,
 };
