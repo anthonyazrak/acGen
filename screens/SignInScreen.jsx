@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: "100%",
+    width: "60%",
     marginVertical: 10,
     borderWidth: 1,
     padding: 10,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: 15,
     borderRadius: 5,
-    width: "100%",
+    width: "40%",
     alignItems: "center",
     marginTop: 20,
   },

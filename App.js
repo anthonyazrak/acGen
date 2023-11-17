@@ -10,7 +10,7 @@ import GenerateScreen from "./screens/GenerateScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import AccountScreen from "./screens/AccountScreen";
 import StackNavigation from "./StackNavigation";
-import { Button } from "react-native";
+import { Button, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -64,7 +64,8 @@ function MainTabNavigator() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="bolt" size={48} color="black" />
+            // <MaterialIcons name="bolt" size={48} color="black" />
+            <img style={{ height: "35px" }} src={idea} />
           ),
         }}
         component={GenerateScreen}
