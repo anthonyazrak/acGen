@@ -10,9 +10,9 @@ import {
 import Slider from "@react-native-community/slider";
 import { useContext } from "react";
 import { auth } from "../services/firebase";
-import { createActivity } from '../services/activity'; 
+import { createActivity } from "../services/activity";
 
-function GenerateScreen({navigation}) {
+function GenerateScreen({ navigation }) {
   const API_KEY = "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";
   const [user, setUser] = useState(null); // To store the authenticated user
 
@@ -95,11 +95,14 @@ function GenerateScreen({navigation}) {
       await sendPromptToChatGPT(prompt)
         .then(async (response) => {
           setResponse(response);
+          console.log(response);
           const activityData = JSON.parse(response);
           const activityId = await createActivity(user.uid, activityData);
           console.log(`Activity created with ID: ${activityId}`);
           activityData.id = activityId;
-          navigation.navigate("DetailsScreen", { response: JSON.stringify(activityData) });
+          navigation.navigate("DetailsScreen", {
+            response: JSON.stringify(activityData),
+          });
           console.log(response);
         })
         .catch((error) => {
