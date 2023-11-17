@@ -64,7 +64,7 @@ function MainTabNavigator() {
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
-            <img style={{ height: "35px" }} src={idea} />
+            <MaterialIcons name="bolt" size={48} color="black" />
           ),
         }}
         component={GenerateScreen}

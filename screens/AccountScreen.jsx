@@ -36,8 +36,6 @@ function AccountScreen({ navigation }) {
     React.useCallback(() => {
       if (user) {
         // Directly call fetchUserDetails here
-        console.log(user)
-        console.log(user.uid)
         fetchUserDetails(user.uid).then(userDetails => {
           setName(userDetails.name);
           setLastName(userDetails.lastName);
