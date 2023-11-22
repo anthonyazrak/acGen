@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
+import * as FileSystem from "expo-file-system";
+
 import { getDownloadURL, ref } from "firebase/storage";
 import { auth } from "../services/firebase";
 import {
@@ -98,12 +100,16 @@ function HomeScreen({ navigation }) {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      addImageDocumentToDoc(id, uri);
+
+      // Convert image to base64
+      const base64Image = await imageToBase64(uri);
+
+      addImageDocumentToDoc(id, base64Image);
 
       setActivities((currentActivities) =>
         currentActivities.map((activity) => {
           if (activity.id === id) {
-            return { ...activity, imageUri: uri };
+            return { ...activity, imageUri: resizedUri };
           }
           return activity;
         })
@@ -111,9 +117,68 @@ function HomeScreen({ navigation }) {
     }
   };
 
+  const imageToBase64 = async (imageFile) => {
+    try {
+      if (Platform.OS === "web") {
+        // For web, use FileReader to read the file and convert to base64
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+
+              // Calculate the new dimensions to maintain aspect ratio
+              let width = img.width;
+              let height = img.height;
+              const aspectRatio = width / height;
+              const maxDimension = Math.sqrt(1048576);
+              if (width > height) {
+                width = maxDimension;
+                height = width / aspectRatio;
+              } else {
+                height = maxDimension;
+                width = height * aspectRatio;
+              }
+
+              // Set canvas dimensions
+              canvas.width = width;
+              canvas.height = height;
+
+              // Draw the image on the canvas with downsampling
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Convert the canvas content to base64
+              const base64String = canvas.toDataURL("image/jpeg", 0.9); // Adjust the quality if needed
+              resolve(base64String);
+            };
+            img.src = event.target.result;
+          };
+        });
+      } else {
+        // For mobile, use expo-file-system
+        const base64 = await FileSystem.readAsStringAsync(imageFile, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        return base64;
+      }
+    } catch (error) {
+      console.error("Error converting image to base64:", error);
+      throw error;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
+      <Text style={styles.welcomeText}>Recent Activities</Text>
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}
@@ -133,7 +198,7 @@ function HomeScreen({ navigation }) {
               }}
             >
               <Image
-                source={{ uri: item.imageUrl }}
+                source={{ uri: `${item.imageUrl}` }}
                 style={styles.activityImage}
                 onError={(error) =>
                   console.error("Image loading error:", error.nativeEvent.error)
@@ -160,7 +225,7 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#efd9ce",
+    backgroundColor: "#eff7f6",
     alignItems: "center",
     paddingTop: 20,
   },

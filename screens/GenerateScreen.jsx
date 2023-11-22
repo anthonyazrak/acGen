@@ -9,29 +9,27 @@ import {
   TextInput,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { useContext } from "react";
 import { auth } from "../services/firebase";
 import { createActivity } from "../services/activity";
+import { ActivityIndicator } from "react-native";
 
 function GenerateScreen({ navigation }) {
-  const API_KEY = "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";
-  const [user, setUser] = useState(null); // To store the authenticated user
+  const API_KEY = "";
+  const [user, setUser] = useState(null);
 
   const [price, setPrice] = useState(10);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [timeOfDay, setTimeOfDay] = useState(12); // New state for time of the day
+  const [timeOfDay, setTimeOfDay] = useState(12);
   const [loadingActivity, setLoadingActivity] = useState(false);
   const [response, setResponse] = useState("");
   const locations = ["Home", "School", "Forest", "Beach", "Park", "Lake"];
 
   useEffect(() => {
-    // Firebase Auth state observer
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
       } else {
-        // Redirect to the root path if there's no signed-in user
         navigation.navigate("MainTabs");
       }
     });
@@ -40,12 +38,9 @@ function GenerateScreen({ navigation }) {
       unsubscribe();
     };
   }, []);
+
   const selectLocation = (location) => {
     setSelectedLocation(location);
-  };
-
-  const handleGeneratePress = () => {
-    console.log("Generate button pressed");
   };
 
   const API_ENDPOINT = "https://api.openai.com/v1/chat/completions";
@@ -93,22 +88,20 @@ function GenerateScreen({ navigation }) {
       setLoadingActivity(true);
       const prompt = `I am currently at ${selectedLocation} with a budget of ${price} and in a group of ${numberOfPeople}. Can you suggest an activity for us? Please provide the response in a JSON format with the exact fields "Title", "Material", and "Description". The "Description" and "Material" fields need to have only one string each and have steps numbered and each step on a new line`;
       console.log(prompt);
-      await sendPromptToChatGPT(prompt)
-        .then(async (response) => {
-          setResponse(response);
-          console.log(response);
-          const activityData = JSON.parse(response);
-          const activityId = await createActivity(user.uid, activityData);
-          console.log(`Activity created with ID: ${activityId}`);
-          activityData.id = activityId;
-          navigation.navigate("DetailsScreen", {
-            response: JSON.stringify(activityData),
-          });
-          console.log(response);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+
+      const response = await sendPromptToChatGPT(prompt);
+      setResponse(response);
+
+      const activityData = JSON.parse(response);
+      const activityId = await createActivity(user.uid, activityData);
+      console.log(`Activity created with ID: ${activityId}`);
+
+      activityData.id = activityId;
+      navigation.navigate("DetailsScreen", {
+        response: JSON.stringify(activityData),
+      });
+
+      console.log(response);
     } catch (error) {
       console.error("Error generating activity:", error);
     } finally {
@@ -117,7 +110,7 @@ function GenerateScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Text style={styles.header}>Choose a location</Text>
         <View style={styles.locationContainer}>
@@ -184,7 +177,11 @@ function GenerateScreen({ navigation }) {
           onPress={handleGenerateActivity}
           disabled={loadingActivity}
         >
-          <Text style={styles.generateButtonText}>Generate</Text>
+          {loadingActivity ? (
+            <ActivityIndicator size="small" color="#FAF9F9" />
+          ) : (
+            <Text style={styles.generateButtonText}>Generate</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -192,9 +189,12 @@ function GenerateScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollView: {
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#eff7f6",
   },
   header: {
     fontSize: 24,
@@ -211,18 +211,28 @@ const styles = StyleSheet.create({
   locationButton: {
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#7161EF",
     borderRadius: 20,
     marginBottom: 10,
     alignItems: "center",
     backgroundColor: "#f5f5f5",
-    minWidth: "48%", // Ensure at least two buttons fit in one row
+    minWidth: "48%",
   },
   selectedLocation: {
-    backgroundColor: "#c2f0c2", // Highlight color for selected location
+    backgroundColor: "#b79ced",
   },
   locationText: {
     fontSize: 16,
+  },
+  locationInput: {
+    height: 45,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 8,
+    textAlign: "center",
   },
   sliderContainer: {
     marginBottom: 20,
@@ -233,38 +243,27 @@ const styles = StyleSheet.create({
   },
   slider: {
     height: 40,
+    color: "#DEC0F1",
   },
   generateButton: {
-    backgroundColor: "#000", // Black background
+    backgroundColor: "#B79CED",
     padding: 15,
     borderRadius: 10,
+    color: "#B79CED",
     alignItems: "center",
     marginBottom: 20,
   },
   loadingButton: {
-    backgroundColor: "gray", // Black background
+    backgroundColor: "#777",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
   },
   generateButtonText: {
-    color: "#ffffff", // White text color
+    color: "#FAF9F9",
     fontSize: 18,
     fontWeight: "bold",
-  },
-
-  locationInput: {
-    height: 45,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
-    padding: 10,
-    fontSize: 18,
-    borderRadius: 8,
-    alignContent: "center",
-    alignItems: "center",
-    textAlign: "center",
   },
 });
 

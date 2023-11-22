@@ -1,8 +1,8 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack"; // Import createStackNavigator
-import SignInScreen from "./screens/SignInScreen"; // Make sure to import SignInScreen
+import { createStackNavigator } from "@react-navigation/stack";
+import SignInScreen from "./screens/SignInScreen";
 import HomeScreen from "./screens/HomeScreen";
 import SavedScreen from "./screens/SavedScreen";
 import SignUpScreen from "./screens/SignUpScreen";
@@ -10,11 +10,9 @@ import GenerateScreen from "./screens/GenerateScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import AccountScreen from "./screens/AccountScreen";
 import StackNavigation from "./StackNavigation";
-import { Button } from "react-native";
+import { Button, Image } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { auth, logOut } from "./services/firebase";
 import idea from "./assets/idea.svg";
 
@@ -22,16 +20,25 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const logout = async (navigation) => {
-  // Implement your logout logic here
-  // This might include clearing user data from storage and navigating to the sign-in screen
-  await logOut(); // Call the logout function to sign the user out
+  await logOut();
   navigation.navigate("SignIn");
+};
+
+const commonHeaderOptions = {
+  headerStyle: {
+    backgroundColor: "#957fef", // Set the header background color
+  },
+  headerTintColor: "#fff", // Set the text color in the header
+  headerTitleStyle: {
+    fontWeight: "bold",
+  },
 };
 
 const screenOptions = ({ navigation }) => ({
   headerRight: () => (
-    <Button onPress={() => logout(navigation)} title="Log Out" color="#000" />
+    <Button onPress={() => logout(navigation)} title="Log Out" />
   ),
+  ...commonHeaderOptions,
 });
 
 // Define the main tab navigator as a separate component
@@ -65,7 +72,7 @@ function MainTabNavigator() {
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             // <MaterialIcons name="bolt" size={48} color="black" />
-            <img style={{ height: "40px" }} src={idea}></img>
+            <img style={{ height: "35px" }} src={idea} />
           ),
         }}
         component={GenerateScreen}
@@ -83,9 +90,12 @@ function MainTabNavigator() {
     </Tab.Navigator>
   );
 }
+
 function SignInStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false, ...commonHeaderOptions }}
+    >
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="MainTabs" component={MainTabNavigator} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />

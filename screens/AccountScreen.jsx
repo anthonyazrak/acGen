@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Button,
 } from "react-native";
 import {
   auth,
@@ -39,7 +38,6 @@ function AccountScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       if (user) {
-        // Directly call fetchUserDetails here
         fetchUserDetails(user.uid)
           .then((userDetails) => {
             setName(userDetails.name);
@@ -71,46 +69,40 @@ function AccountScreen({ navigation }) {
       const updatedDetails = {
         name: name,
         lastName: lastName,
-        age: age, // Make sure this is stored as a number if your database schema expects a number
+        age: age,
         city: city,
-        activities: activities, // Include the activities array
-        // Include other fields as necessary
+        activities: activities,
       };
 
       try {
         await updateUserDetails(user.uid, updatedDetails);
         console.log("User details updated successfully");
-        // Optionally, show a success message to the user
       } catch (error) {
         console.error("Error updating user details:", error);
-        // Optionally, show an error message to the user
       }
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.safeAreaView}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
-          {/* <View style={styles.header}>
-            <Text style={styles.headerTitle}>Account</Text>
-          </View> */}
           <View style={styles.form}>
-            <Text>Name</Text>
+            <Text style={styles.label}>Name</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
               placeholder="Your name"
             />
-            <Text>Last Name</Text>
+            <Text style={styles.label}>Last Name</Text>
             <TextInput
               style={styles.input}
               value={lastName}
               onChangeText={setLastName}
               placeholder="Your last name"
             />
-            <Text>Age</Text>
+            <Text style={styles.label}>Age</Text>
             <TextInput
               style={styles.input}
               value={age}
@@ -118,14 +110,14 @@ function AccountScreen({ navigation }) {
               keyboardType="numeric"
               placeholder="Your age"
             />
-            <Text>City</Text>
+            <Text style={styles.label}>City</Text>
             <TextInput
               style={styles.input}
               value={city}
               onChangeText={setCity}
               placeholder="Your city"
             />
-            <Text>Favorite Activities:</Text>
+            <Text style={styles.label}>Favorite Activities:</Text>
             {activities.map((activity, index) => (
               <View key={index} style={styles.activityContainer}>
                 <Text style={styles.activityText}>{activity}</Text>
@@ -143,9 +135,8 @@ function AccountScreen({ navigation }) {
               onChangeText={setNewActivity}
               placeholder="Add new activity..."
             />
-            {/* <Button title="Add Activity" onPress={addActivity} /> */}
-            <TouchableOpacity style={styles.saveButton} onPress={addActivity}>
-              <Text style={styles.saveButtonText}>Add Activity</Text>
+            <TouchableOpacity style={styles.addButton} onPress={addActivity}>
+              <Text style={styles.addButtonLabel}>Add Activity</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Save</Text>
@@ -158,32 +149,18 @@ function AccountScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  safeAreaView: {
+    flex: 1,
+  },
   scrollView: {
-    backgroundColor: "white", // or any color that matches your design
+    backgroundColor: "#eff7f6",
   },
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
     padding: 20,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 40,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  editButton: {
-    backgroundColor: "#dedede",
-    borderRadius: 20,
-    padding: 10,
-  },
   form: {
-    borderRadius: 5,
+    borderRadius: 10,
     backgroundColor: "#fff",
     padding: 20,
     shadowColor: "#000",
@@ -195,6 +172,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -203,50 +184,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 16,
   },
-  activities: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    marginBottom: 30,
-  },
-  activityButton: {
-    backgroundColor: "#e6e6e6",
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    marginVertical: 10,
-    minWidth: "40%", // Ensures the button is not too narrow
-    alignItems: "center", // Centers text horizontally
-    justifyContent: "center", // Centers text vertically
-  },
-  saveButton: {
-    backgroundColor: "#5c6bc0",
-    borderRadius: 25,
-    paddingVertical: 15,
-    margin: 10,
-    alignItems: "center",
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
   activityContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#e6e6e6",
-    borderRadius: 25,
+    borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 10,
   },
   activityText: {
-    // Style for the activity text
     fontSize: 16,
   },
   deleteButton: {
-    // Style for the delete button
     backgroundColor: "red",
     marginLeft: 10,
     borderRadius: 15,
@@ -255,10 +206,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   deleteButtonText: {
-    // Style for the 'X' text
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
+  addButton: {
+    backgroundColor: "#B79CED",
+    borderRadius: 10,
+    paddingVertical: 15,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  addButtonLabel: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  saveButton: {
+    backgroundColor: "#B79CED",
+    borderRadius: 10,
+    paddingVertical: 15,
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
 });
+
 export default AccountScreen;

@@ -1,9 +1,8 @@
-import React, { useState, useEffect }  from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { auth } from "../services/firebase";
-import { getNotCompletedActivitiesByUid } from '../services/activity'; 
-import { useFocusEffect } from '@react-navigation/native';
+import { getNotCompletedActivitiesByUid } from "../services/activity";
+import { useFocusEffect } from "@react-navigation/native";
 
 function SavedScreen({ navigation }) {
   const [user, setUser] = useState(null);
@@ -40,48 +39,47 @@ function SavedScreen({ navigation }) {
     }, [user])
   );
 
-
-return (
-  <View style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}>
-    <ScrollView>
-      {activities.map((item) => (
-        <TouchableOpacity
-          onPress={() => {
-            const activityDetails = {
-              id: item.id,
-              Title: item.title,
-              Material: item.materialsNeeded,
-              Description: item.description,
-            };
-            navigation.navigate("DetailsScreen", { response: JSON.stringify(activityDetails) });
-          }}
-          key={item.id}
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "black",
-            width: "100%",
-            height: "100%", // Adjust the height as needed
-            marginVertical: 10, // Added margin for spacing
-            padding: 20,
-            borderRadius: 20,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 20 }}>{item.title}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  </View>
-);
+  return (
+    <View style={{ flex: 1, backgroundColor: "#eff7f6", alignItems: "center" }}>
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+        {activities.map((item) => (
+          <TouchableOpacity
+            onPress={() => {
+              const activityDetails = {
+                id: item.id,
+                Title: item.title,
+                Material: item.materialsNeeded,
+                Description: item.description,
+              };
+              navigation.navigate("DetailsScreen", {
+                response: JSON.stringify(activityDetails),
+              });
+            }}
+            key={item.id}
+            style={{
+              width: "80%",
+              marginVertical: 10,
+              padding: 20,
+              borderRadius: 15,
+              backgroundColor: "#957fef",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+          >
+            <Text style={{ color: "#333", fontSize: 20, fontWeight: "bold" }}>
+              {item.title}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
 
 export default SavedScreen;

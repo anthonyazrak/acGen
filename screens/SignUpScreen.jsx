@@ -143,7 +143,7 @@ function SignUpScreen({ navigation }) {
         onPress={handleSignUpWithEmailAndPassword}
         color="#007AFF"
       />
-      <View style={{ marginTop: "10px" }}>
+      <View style={{ marginTop: "10px" , width: "100%"}}>
         <Button title="Back to Sign In" onPress={back} color="#007AFF" />
       </View>
     </ScrollView>
