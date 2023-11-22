@@ -14,7 +14,7 @@ import { auth } from "../services/firebase";
 import { createActivity } from "../services/activity";
 
 function GenerateScreen({ navigation }) {
-  const API_KEY = "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";
+  const API_KEY = "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";
   const [user, setUser] = useState(null); // To store the authenticated user
 
   const [price, setPrice] = useState(10);

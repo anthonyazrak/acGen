@@ -66,6 +66,7 @@ function HomeScreen({ navigation }) {
   useEffect(() => {
     fetchActivities();
   }, [user]);
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     await fetchActivities();
@@ -97,7 +98,6 @@ function HomeScreen({ navigation }) {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      // console.log("Updating activity with ID:", id, "with URI:", uri); // Log the URI being set
       addImageDocumentToDoc(id, uri);
 
       setActivities((currentActivities) =>
@@ -118,23 +118,7 @@ function HomeScreen({ navigation }) {
         data={activities}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.imageContainer}>
-            {item.imageUrl ? (
-              <Image
-                source={{ uri: item.imageUrl }}
-                style={styles.image}
-                onError={(error) =>
-                  console.error("Image loading error:", error.nativeEvent.error)
-                }
-              />
-            ) : (
-              <TouchableOpacity
-                onPress={() => pickImage(item.id)}
-                style={styles.imageButton}
-              >
-                <Text>Add a picture</Text>
-              </TouchableOpacity>
-            )}
+          <View style={styles.activityContainer}>
             <TouchableOpacity
               onPress={() => {
                 const activityDetails = {
@@ -148,8 +132,21 @@ function HomeScreen({ navigation }) {
                 });
               }}
             >
-              <Text style={styles.activityTitle}>{item.title}</Text>
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.activityImage}
+                onError={(error) =>
+                  console.error("Image loading error:", error.nativeEvent.error)
+                }
+              />
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pickImage(item.id)}
+              style={styles.addButton}
+            >
+              <Text style={styles.addButtonText}>Add a picture</Text>
+            </TouchableOpacity>
+            <Text style={styles.activityTitle}>{item.title}</Text>
           </View>
         )}
         refreshControl={
@@ -159,12 +156,13 @@ function HomeScreen({ navigation }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#efd9ce",
     alignItems: "center",
-    justifyContent: "center",
+    paddingTop: 20,
   },
   welcomeText: {
     fontSize: 24,
@@ -173,29 +171,35 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
   },
-  imageContainer: {
+  activityContainer: {
     alignItems: "center",
-    margin: 20,
+    marginVertical: 20,
   },
-  image: {
-    width: 200,
+  activityImage: {
+    width: 300,
     height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
   },
-  imageButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-    width: 200,
-    backgroundColor: "#ddd",
+  addButton: {
+    backgroundColor: "#dec0f1",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  addButtonText: {
+    color: "#333",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   activityTitle: {
-    marginTop: 10,
     fontSize: 18,
     fontWeight: "bold",
-    backgroundColor: "#CBC3E3",
+    backgroundColor: "#b79ced",
     padding: 10,
     borderRadius: 10,
     color: "#333",
   },
 });
+
 export default HomeScreen;
