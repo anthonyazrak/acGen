@@ -67,7 +67,7 @@ function ActivityScreen({ route }) {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#F0F4F8",
+    backgroundColor: "#0052ff",
   },
   container: {
     padding: 20,

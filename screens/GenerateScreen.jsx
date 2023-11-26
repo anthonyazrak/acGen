@@ -112,20 +112,26 @@ function GenerateScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.header}>Choose a location</Text>
+        <Text style={styles.header}>Pick a location</Text>
         <View style={styles.locationContainer}>
-          {locations.map((location) => (
-            <TouchableOpacity
-              key={location}
-              style={[
-                styles.locationButton,
-                selectedLocation === location && styles.selectedLocation,
-              ]}
-              onPress={() => selectLocation(location)}
-            >
-              <Text style={styles.locationText}>{location}</Text>
-            </TouchableOpacity>
-          ))}
+        {locations.map((location) => (
+          <TouchableOpacity
+            key={location}
+            style={[
+              styles.locationButton,
+              selectedLocation === location && styles.selectedLocation,
+            ]}
+            onPress={() => selectLocation(location)}
+          >
+            <Text style={[
+              styles.locationText,
+              selectedLocation === location && styles.selectedLocationText
+            ]}>
+              {location}
+            </Text>
+          </TouchableOpacity>
+        ))}
+
           <TextInput
             style={styles.locationInput}
             placeholder="Enter custom location"
@@ -220,6 +226,9 @@ const styles = StyleSheet.create({
   },
   selectedLocation: {
     backgroundColor: "#0052ff",
+  },
+  selectedLocationText: {
+    color: "#fff",
   },
   locationText: {
     fontSize: 16,

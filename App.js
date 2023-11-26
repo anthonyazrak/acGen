@@ -59,7 +59,7 @@ function MainTabNavigator() {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
-        name="Home"
+        name="Recent Activities"
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => (

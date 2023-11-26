@@ -192,8 +192,8 @@ function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
-      <Text style={styles.welcomeText}>Recent Activities</Text>
+      {/* <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text> */}
+      {/* <Text style={styles.welcomeText}>Recent Activities</Text> */}
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginVertical: 20,
-    color: "#333",
+    color: "#fff",
     textAlign: "center",
   },
   activityContainer: {
