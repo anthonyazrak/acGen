@@ -38,19 +38,18 @@ const getCompletedActivitiesByUid = async (uid) => {
     const completedActivities = [];
 
     querySnapshot.forEach((doc) => {
-      console.log(doc);
       const {
         Title: title,
         Description: description,
         Material: materialsNeeded,
-        imageUrl: imageUrl,
+        image: image,
       } = doc.data();
       completedActivities.push({
         id: doc.id,
         title,
         description,
         materialsNeeded,
-        imageUrl,
+        image,
       });
     });
 
@@ -178,10 +177,10 @@ const uploadImageToStorage = async (file, docId) => {
 const addImageDocumentToDoc = async (docId, file) => {
   try {
     // Upload image to Firebase Storage and get download URL
-    const imageUrl = await uploadImageToStorage(file, docId);
+    // const imageUrl = await uploadImageToStorage(file, docId);
     // Update the Firestore document with the image URL
     const docRef = doc(db, "activities", docId);
-    await updateDoc(docRef, { imageUrl });
+    await updateDoc(docRef, { image: file });
 
     console.log("Image document added to Firestore successfully");
   } catch (error) {
