@@ -16,6 +16,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, logOut } from "./services/firebase";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native"
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -61,8 +62,9 @@ function MainTabNavigator() {
         name="Home"
         options={{
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={24} color="black" />
+          tabBarIcon: ({ color, size, focused }) => (
+            focused ? <Ionicons name="ios-home" size={26} color="#0052ff" /> :
+            <Ionicons name="ios-home-outline" size={26} color="black" />
           ),
         }}
         component={HomeScreen}
@@ -72,8 +74,9 @@ function MainTabNavigator() {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="bookmark" size={24} color="black" />
+          tabBarIcon: ({ color, size, focused }) => (
+            focused ? <Ionicons name="ios-bookmark" size={24} color="#0052ff" /> :
+            <Ionicons name="ios-bookmark-outline" size={24} color="black" />
           ),
         }}
         component={StackNavigation}
@@ -82,8 +85,8 @@ function MainTabNavigator() {
         name="Generate"
         options={{
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, size }) => (
-            // <MaterialIcons name="bolt" size={48} color="black" />
+          tabBarIcon: ({ color, size, focused }) => (
+            focused ? <MaterialCommunityIcons name="lightbulb-on" size={30} color="#0052ff" /> :
             <MaterialCommunityIcons name="lightbulb-on-outline" size={30} color="black" />
           ),
         }}
@@ -93,8 +96,9 @@ function MainTabNavigator() {
         name="Account"
         options={{
           tabBarShowLabel: false,
-          tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="user-circle" size={24} color="black" />
+          tabBarIcon: ({ color, size, focused }) => (
+            focused ? <Ionicons name="ios-person-circle" size={30} color="#0052ff" /> :
+            <Ionicons name="ios-person-circle-outline" size={30} color="black" />
           ),
         }}
         component={AccountScreen}
@@ -102,6 +106,7 @@ function MainTabNavigator() {
     </Tab.Navigator>
   );
 }
+
 
 function SignInStack() {
   return (
