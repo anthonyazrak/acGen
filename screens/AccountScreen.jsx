@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    backgroundColor: "#eff7f6",
+    backgroundColor: "#0052ff",
   },
   container: {
     flex: 1,
@@ -211,8 +211,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addButton: {
-    backgroundColor: "#B79CED",
-    borderRadius: 10,
+    backgroundColor: "#0052ff",
+    borderRadius: 40,
     paddingVertical: 15,
     marginVertical: 10,
     alignItems: "center",
@@ -223,8 +223,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   saveButton: {
-    backgroundColor: "#B79CED",
-    borderRadius: 10,
+    backgroundColor: "#0052ff",
+    borderRadius: 40,
     paddingVertical: 15,
     marginVertical: 10,
     alignItems: "center",

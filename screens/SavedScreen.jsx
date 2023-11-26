@@ -40,7 +40,7 @@ function SavedScreen({ navigation }) {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#eff7f6", alignItems: "center" }}>
+    <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center" }}>
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         {activities.map((item) => (
           <TouchableOpacity
