@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Image,
+  Image as RNImage, // Rename the React Native Image component
   FlatList,
   TouchableOpacity,
   Alert,
@@ -10,7 +10,7 @@ import {
   RefreshControl,
   Share,
 } from "react-native";
-import { Feather } from '@expo/vector-icons'; 
+import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import * as FileSystem from "expo-file-system";
@@ -33,21 +33,8 @@ function HomeScreen({ navigation }) {
     if (user && user.uid) {
       try {
         const fetchedActivities = await getCompletedActivitiesByUid(user.uid);
-
-        // Fetch download URL for each activity's image
-        const activitiesWithUrls = await Promise.all(
-          fetchedActivities.map(async (activity) => {
-            if (activity.imageUrl) {
-              const storageRef = ref(storage, activity.imageUrl);
-              activity.imageUrl = await getDownloadURL(storageRef);
-            }
-
-            return activity;
-          })
-        );
-
-        // Update the state once all URLs are fetched and downloaded
-        setActivities(activitiesWithUrls);
+        console.log(fetchedActivities);
+        setActivities(fetchedActivities);
       } catch (error) {
         console.error("Error fetching completed activities:", error);
       }
@@ -105,13 +92,12 @@ function HomeScreen({ navigation }) {
 
       // Convert image to base64
       const base64Image = await imageToBase64(uri);
-
       addImageDocumentToDoc(id, base64Image);
 
       setActivities((currentActivities) =>
         currentActivities.map((activity) => {
           if (activity.id === id) {
-            return { ...activity, imageUri: resizedUri };
+            return { ...activity, image: uri };
           }
           return activity;
         })
@@ -122,16 +108,13 @@ function HomeScreen({ navigation }) {
   const imageToBase64 = async (imageFile) => {
     try {
       if (Platform.OS === "web") {
-        // For web, use FileReader to read the file and convert to base64
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImage(reader.result);
-        };
-        reader.readAsDataURL(file);
+        // For web, fetch the image and convert it to base64
+        const response = await fetch(imageFile);
+        const blob = await response.blob();
 
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
-          reader.onload = (event) => {
+          reader.onload = async () => {
             const img = new Image();
             img.onload = () => {
               const canvas = document.createElement("canvas");
@@ -140,14 +123,19 @@ function HomeScreen({ navigation }) {
               // Calculate the new dimensions to maintain aspect ratio
               let width = img.width;
               let height = img.height;
-              const aspectRatio = width / height;
-              const maxDimension = Math.sqrt(1048576);
-              if (width > height) {
-                width = maxDimension;
-                height = width / aspectRatio;
-              } else {
-                height = maxDimension;
-                width = height * aspectRatio;
+              const maxFileSize = 10 * 1024 * 1024; // 10MB
+              const maxDimension = Math.sqrt(maxFileSize / (4 / 3)); // Assuming 4:3 aspect ratio
+
+              if (width > maxDimension || height > maxDimension) {
+                const aspectRatio = width / height;
+
+                if (width > height) {
+                  width = maxDimension;
+                  height = width / aspectRatio;
+                } else {
+                  height = maxDimension;
+                  width = height * aspectRatio;
+                }
               }
 
               // Set canvas dimensions
@@ -159,10 +147,13 @@ function HomeScreen({ navigation }) {
 
               // Convert the canvas content to base64
               const base64String = canvas.toDataURL("image/jpeg", 0.9); // Adjust the quality if needed
-              resolve(base64String);
+              resolve(base64String.split(",")[1]);
             };
-            img.src = event.target.result;
+            img.onerror = reject;
+            img.src = URL.createObjectURL(blob);
           };
+          reader.onerror = reject;
+          reader.readAsArrayBuffer(blob);
         });
       } else {
         // For mobile, use expo-file-system
@@ -180,13 +171,24 @@ function HomeScreen({ navigation }) {
   const onShare = async (id, material, description) => {
     try {
       const result = await Share.share({
-        message: `Check out this activity I generated!` + "\n" + "\n" + `Title: ${id}` + "\n" + "\n" +  `Materials needed: ${material}` + "\n" + "\n" + `Description:` + "\n" + `${description}`, 
-        
+        message:
+          `Check out this activity I generated!` +
+          "\n" +
+          "\n" +
+          `Title: ${id}` +
+          "\n" +
+          "\n" +
+          `Materials needed: ${material}` +
+          "\n" +
+          "\n" +
+          `Description:` +
+          "\n" +
+          `${description}`,
       });
     } catch (error) {
       console.error("Error sharing activity:", error);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -210,8 +212,8 @@ function HomeScreen({ navigation }) {
                 });
               }}
             >
-              <Image
-                source={{ uri: `${item.imageUrl}` }}
+              <RNImage
+                source={{ uri: `data:image/png;base64, ${item.image}` }}
                 style={styles.activityImage}
                 onError={(error) =>
                   console.error("Image loading error:", error.nativeEvent.error)
@@ -224,16 +226,19 @@ function HomeScreen({ navigation }) {
             >
               <Text style={styles.addButtonText}>Add a picture</Text>
             </TouchableOpacity>
-            <View style={{
-              flex: 1,
-              flexDirection: 'row',
-            }
-            }>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+              }}
+            >
               <View>
                 <Text style={styles.activityTitle}>{item.title}</Text>
               </View>
               <TouchableOpacity
-                onPress={() => onShare(item.title, item.materialsNeeded, item.description)}
+                onPress={() =>
+                  onShare(item.title, item.materialsNeeded, item.description)
+                }
                 style={{
                   padding: 10,
                   borderRadius: 8,
