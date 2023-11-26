@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, logOut } from "./services/firebase";
 import idea from "./assets/idea.svg";
+import { TouchableOpacity } from "react-native"
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -36,7 +37,7 @@ const commonHeaderOptions = {
 
 const screenOptions = ({ navigation }) => ({
   headerRight: () => (
-    <Button onPress={() => logout(navigation)} title="Log Out" />
+    <TouchableOpacity onPress={() => logout(navigation)} color={"#fff"} title="Log Out" />
   ),
   ...commonHeaderOptions,
 });
@@ -72,7 +73,7 @@ function MainTabNavigator() {
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             // <MaterialIcons name="bolt" size={48} color="black" />
-            <img style={{ height: "35px" }} src={idea} />
+            <Image style={{ height: 35 }} src={idea} />
           ),
         }}
         component={GenerateScreen}

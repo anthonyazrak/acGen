@@ -1,3 +1,6 @@
+import React from "react";
+import { View, Text } from "react-native";
+
 function DetailsPage() {
   const { id } = useParams();
   const { data, error, loading } = useQuery(GET_USER, {
@@ -8,11 +11,11 @@ function DetailsPage() {
   if (error) return <p>Error :(</p>;
 
   return (
-    <div>
-      <h1>Details Page</h1>
-      <p>{data.user.name}</p>
-      <p>{data.user.email}</p>
-      <p>{data.user.age}</p>
-    </div>
+    <View>
+      <Text>Details Page</Text>
+      <Text>{data.user.name}</Text>
+      <Text>{data.user.email}</Text>
+      <Text>{data.user.age}</Text>
+    </View>
   );
 }

@@ -33,6 +33,7 @@ const SavedStackScreen = ({ navigation }) => (
           <Button
             onPress={() => logout(navigation)}
             title="Log Out"
+            color={"#fff"}
             // color="#fff"
           />
         ),

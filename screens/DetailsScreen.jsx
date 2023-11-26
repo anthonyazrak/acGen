@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { markActivityAsCompleted } from "../services/activity"; // Adjust the path as necessary
@@ -17,11 +18,19 @@ function ActivityScreen({ route }) {
     try {
       console.log("Marking Activity as Completed:", activityDetails.id); // Log the ID for debugging
       await markActivityAsCompleted(activityDetails.id);
-      alert("Activity marked as completed"); // Provide user feedback
-      navigation.navigate("MainTabs");
+      Alert.alert("Activity marked as completed", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("MainTabs"),
+        },
+      ]); // Provide user feedback
     } catch (error) {
       console.error("Error marking activity as completed:", error);
-      alert("Failed to mark activity as completed"); // Error feedback
+      Alert.alert("Error marking activity as completed", [
+        {
+          text: "OK",
+        },
+      ]); // Provide user feedback
     }
   };
 
@@ -126,8 +135,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
     backgroundColor: "#DEC0F1",
-    padding: "20px",
-    borderRadius: "10px",
+    padding: 10,
+    borderRadius: 10,
   },
   backButtonText: {
     fontSize: 24,

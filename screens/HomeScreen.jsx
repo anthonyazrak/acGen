@@ -8,7 +8,9 @@ import {
   Alert,
   Platform,
   RefreshControl,
+  Share,
 } from "react-native";
+import { Feather } from '@expo/vector-icons'; 
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import * as FileSystem from "expo-file-system";
@@ -175,6 +177,17 @@ function HomeScreen({ navigation }) {
     }
   };
 
+  const onShare = async (id, material, description) => {
+    try {
+      const result = await Share.share({
+        message: `Check out this activity I generated!` + "\n" + "\n" + `Title: ${id}` + "\n" + "\n" +  `Materials needed: ${material}` + "\n" + "\n" + `Description:` + "\n" + `${description}`, 
+        
+      });
+    } catch (error) {
+      console.error("Error sharing activity:", error);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
@@ -211,7 +224,26 @@ function HomeScreen({ navigation }) {
             >
               <Text style={styles.addButtonText}>Add a picture</Text>
             </TouchableOpacity>
-            <Text style={styles.activityTitle}>{item.title}</Text>
+            <View style={{
+              flex: 1,
+              flexDirection: 'row',
+            }
+            }>
+              <View>
+                <Text style={styles.activityTitle}>{item.title}</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => onShare(item.title, item.materialsNeeded, item.description)}
+                style={{
+                  padding: 10,
+                  borderRadius: 8,
+                  marginBottom: 10,
+                  marginLeft: 10,
+                }}
+              >
+                <Feather name="share" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         refreshControl={
