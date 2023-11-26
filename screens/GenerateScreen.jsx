@@ -14,6 +14,7 @@ import { createActivity } from "../services/activity";
 import { ActivityIndicator } from "react-native";
 
 function GenerateScreen({ navigation }) {
+  const API_KEY = "";
   const [user, setUser] = useState(null);
 
   const [price, setPrice] = useState(10);
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     padding: 20,
-    backgroundColor: "#eff7f6",
+    backgroundColor: "#fff",
   },
   header: {
     fontSize: 24,
@@ -209,19 +210,20 @@ const styles = StyleSheet.create({
   },
   locationButton: {
     padding: 10,
-    borderWidth: 1,
-    borderColor: "#7161EF",
+    borderWidth: 2,
+    borderColor: "#0052ff",
     borderRadius: 20,
     marginBottom: 10,
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
     minWidth: "48%",
   },
   selectedLocation: {
-    backgroundColor: "#b79ced",
+    backgroundColor: "#0052ff",
   },
   locationText: {
     fontSize: 16,
+    fontWeight: "bold",
   },
   locationInput: {
     height: 45,
@@ -245,17 +247,17 @@ const styles = StyleSheet.create({
     color: "#DEC0F1",
   },
   generateButton: {
-    backgroundColor: "#B79CED",
+    backgroundColor: "#0052ff",
     padding: 15,
-    borderRadius: 10,
-    color: "#B79CED",
+    borderRadius: 40,
+    color: "#0052ff",
     alignItems: "center",
     marginBottom: 20,
   },
   loadingButton: {
     backgroundColor: "#777",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 40,
     alignItems: "center",
     marginBottom: 20,
   },

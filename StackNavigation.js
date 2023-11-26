@@ -4,6 +4,7 @@ import { Button } from "react-native";
 import { auth, logOut } from "./services/firebase";
 import SavedScreen from "./screens/SavedScreen";
 import DetailsScreen from "./screens/DetailsScreen";
+import { TouchableOpacity } from "react-native";
 
 const SavedStack = createStackNavigator();
 
@@ -16,7 +17,7 @@ const SavedStackScreen = ({ navigation }) => (
   <SavedStack.Navigator
     screenOptions={{
       headerStyle: {
-        backgroundColor: "#957fef", // Set the header background color
+        backgroundColor: "#0052ff", // Set the header background color
       },
       headerTintColor: "#fff", // Set the text color in the header
       headerTitleStyle: {
@@ -30,10 +31,11 @@ const SavedStackScreen = ({ navigation }) => (
       options={{
         title: "Saved Activities", // Set the title in the header
         headerRight: () => (
-          <Button
+          <TouchableOpacity
             onPress={() => logout(navigation)}
             title="Log Out"
             color={"#fff"}
+            
             // color="#fff"
           />
         ),

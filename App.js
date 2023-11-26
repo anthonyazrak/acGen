@@ -10,11 +10,11 @@ import GenerateScreen from "./screens/GenerateScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import AccountScreen from "./screens/AccountScreen";
 import StackNavigation from "./StackNavigation";
-import { Button, Image } from "react-native";
+import { Button, Image, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { auth, logOut } from "./services/firebase";
-import idea from "./assets/idea.svg";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native"
 
 const Tab = createBottomTabNavigator();
@@ -27,17 +27,28 @@ const logout = async (navigation) => {
 
 const commonHeaderOptions = {
   headerStyle: {
-    backgroundColor: "#957fef", // Set the header background color
+    shadowColor: 'transparent', // this covers iOS
+    elevation: 0, // this covers Android
+    backgroundColor: "#0052ff", // Set the header background color
   },
+  
   headerTintColor: "#fff", // Set the text color in the header
   headerTitleStyle: {
     fontWeight: "bold",
   },
+  
 };
 
 const screenOptions = ({ navigation }) => ({
   headerRight: () => (
-    <TouchableOpacity onPress={() => logout(navigation)} color={"#fff"} title="Log Out" />
+    <TouchableOpacity onPress={() => logout(navigation)} color={"#fff"}>
+      <Text style={{
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+        marginRight: 10,
+      }}>Log Out</Text>
+    </TouchableOpacity>
   ),
   ...commonHeaderOptions,
 });
@@ -73,7 +84,7 @@ function MainTabNavigator() {
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             // <MaterialIcons name="bolt" size={48} color="black" />
-            <Image style={{ height: 35 }} src={idea} />
+            <MaterialCommunityIcons name="lightbulb-on-outline" size={30} color="black" />
           ),
         }}
         component={GenerateScreen}

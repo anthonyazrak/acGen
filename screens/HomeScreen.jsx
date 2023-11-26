@@ -262,7 +262,7 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eff7f6",
+    backgroundColor: "#0052ff",
     alignItems: "center",
     paddingTop: 20,
   },
@@ -275,7 +275,9 @@ const styles = StyleSheet.create({
   },
   activityContainer: {
     alignItems: "center",
-    marginVertical: 20,
+    marginVertical: 0,
+    backgroundColor: "#fff",
+    borderRadius: 20,
   },
   activityImage: {
     width: 300,
