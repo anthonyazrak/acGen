@@ -14,7 +14,7 @@ import { createActivity } from "../services/activity";
 import { ActivityIndicator } from "react-native";
 
 function GenerateScreen({ navigation }) {
-  const API_KEY = "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";
+    const API_KEY = "";
   const [user, setUser] = useState(null);
 
   const [price, setPrice] = useState(10);
