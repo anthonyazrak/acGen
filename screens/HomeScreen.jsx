@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import * as FileSystem from "expo-file-system";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { getDownloadURL, ref } from "firebase/storage";
 import { auth } from "../services/firebase";
@@ -33,7 +34,6 @@ function HomeScreen({ navigation }) {
     if (user && user.uid) {
       try {
         const fetchedActivities = await getCompletedActivitiesByUid(user.uid);
-        console.log(fetchedActivities);
         setActivities(fetchedActivities);
       } catch (error) {
         console.error("Error fetching completed activities:", error);
@@ -193,24 +193,14 @@ function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
-      <Text style={styles.welcomeText}>Recent Activities</Text>
+      <Text style={styles.welcomeText}>Favorite Activities</Text>
       <FlatList
         data={activities}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.activityContainer}>
             <TouchableOpacity
-              onPress={() => {
-                const activityDetails = {
-                  id: item.id,
-                  Title: item.title,
-                  Material: item.materialsNeeded,
-                  Description: item.description,
-                };
-                navigation.navigate("DetailsScreen", {
-                  response: JSON.stringify(activityDetails),
-                });
-              }}
+
             >
               <RNImage
                 source={{ uri: `data:image/png;base64, ${item.image}` }}
@@ -221,20 +211,34 @@ function HomeScreen({ navigation }) {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => pickImage(item.id)}
-              style={styles.addButton}
-            >
-              <Text style={styles.addButtonText}>Add a picture</Text>
-            </TouchableOpacity>
+                onPress={() => pickImage(item.id)}
+                style={styles.addButton}
+              >
+                <MaterialIcons name="add-a-photo" size={24} color="black" />
+              </TouchableOpacity>
+
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
               }}
             >
+              <TouchableOpacity
+              onPress={() => {
+                const activityDetails = {
+                  id: item.id,
+                  Title: item.title,
+                  Material: item.materialsNeeded,
+                  Description: item.description,
+                };
+                navigation.navigate("DetailsScreen", {
+                  response: JSON.stringify(activityDetails),
+                });
+              }}>
               <View>
                 <Text style={styles.activityTitle}>{item.title}</Text>
               </View>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
                   onShare(item.title, item.materialsNeeded, item.description)
@@ -243,7 +247,8 @@ function HomeScreen({ navigation }) {
                   padding: 10,
                   borderRadius: 8,
                   marginBottom: 10,
-                  marginLeft: 10,
+                  marginLeft: 5,
+                  marginRight: 5,
                 }}
               >
                 <Feather name="share" size={24} color="black" />
@@ -262,7 +267,7 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0052ff",
+    backgroundColor: "#fff",
     alignItems: "center",
     paddingTop: 20,
   },
@@ -275,9 +280,13 @@ const styles = StyleSheet.create({
   },
   activityContainer: {
     alignItems: "center",
-    marginVertical: 0,
+    marginVertical: 5,
+    marginLeft: 8,
     backgroundColor: "#fff",
     borderRadius: 20,
+    borderWidth: 1,   // Set the width of the border
+    borderColor: "#000",
+    width: "94%"
   },
   activityImage: {
     width: 300,
@@ -286,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   addButton: {
-    backgroundColor: "#dec0f1",
+    backgroundColor: "#fff",
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
@@ -299,8 +308,9 @@ const styles = StyleSheet.create({
   activityTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    backgroundColor: "#b79ced",
+    backgroundColor: "#b5cffd",
     padding: 10,
+    marginLeft:53,
     borderRadius: 10,
     color: "#333",
   },

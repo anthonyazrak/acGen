@@ -14,7 +14,7 @@ import { createActivity } from "../services/activity";
 import { ActivityIndicator } from "react-native";
 
 function GenerateScreen({ navigation }) {
-  const API_KEY = "";
+  const API_KEY = "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";
   const [user, setUser] = useState(null);
 
   const [price, setPrice] = useState(10);
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   locationButton: {
     padding: 10,
     borderWidth: 2,
-    borderColor: "#0052ff",
+    borderColor: "#000",
     borderRadius: 20,
     marginBottom: 10,
     alignItems: "center",
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     minWidth: "48%",
   },
   selectedLocation: {
-    backgroundColor: "#0052ff",
+    backgroundColor: "#528ffb",
   },
   locationText: {
     fontSize: 16,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     color: "#DEC0F1",
   },
   generateButton: {
-    backgroundColor: "#0052ff",
+    backgroundColor: "#000",
     padding: 15,
     borderRadius: 40,
     color: "#0052ff",

@@ -57,11 +57,11 @@ function SavedScreen({ navigation }) {
             }}
             key={item.id}
             style={{
-              width: "80%",
+              width: "100%",
               marginVertical: 10,
               padding: 20,
               borderRadius: 15,
-              backgroundColor: "#957fef",
+              backgroundColor: "#b5cffd",
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
@@ -72,7 +72,7 @@ function SavedScreen({ navigation }) {
               elevation: 5,
             }}
           >
-            <Text style={{ color: "#333", fontSize: 20, fontWeight: "bold" }}>
+        <Text style={{ color: "#000", fontSize: 20, fontWeight: "normal", textAlign: "center" }}>
               {item.title}
             </Text>
           </TouchableOpacity>

@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Image,
+  LogBox,
 } from "react-native";
 import {
   logInWithEmailAndPassword,
@@ -13,6 +15,9 @@ import {
   sendPasswordReset,
   auth,
 } from "../services/firebase";
+
+LogBox.ignoreLogs(['@firebase/auth:']);
+import Logo from "../assets/app_logo.png"; // Replace with the actual path to your logo image
 
 function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -46,6 +51,7 @@ function SignInScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Image source={Logo} style={styles.logo} />
       <Text style={styles.title}>Sign in</Text>
 
       <TextInput
@@ -55,6 +61,7 @@ function SignInScreen({ navigation }) {
         placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
+        placeholderTextColor="black" 
       />
 
       <TextInput
@@ -63,6 +70,7 @@ function SignInScreen({ navigation }) {
         value={password}
         placeholder="Password"
         secureTextEntry
+        placeholderTextColor="black" 
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>
@@ -81,10 +89,20 @@ function SignInScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
+    // flex: 1,
+    // justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    // padding: 20,
+    backgroundColor: "#000",
+    height: "100%",
+  },
+  logo: {
+    width: 310, // Adjust the width and height according to your logo size
+    height: 120, // Adjust the width and height according to your logo size
+    marginBottom: 60,
+  },
+  content: {
+    alignItems: "center", // Center the content horizontally
   },
   title: {
     fontSize: 24,
@@ -95,13 +113,14 @@ const styles = StyleSheet.create({
     height: 40,
     width: "60%",
     marginVertical: 10,
-    borderWidth: 1,
+    borderWidth: 2,
     padding: 10,
-    borderRadius: 5,
-    borderColor: "gray",
+    borderRadius: 15,
+    borderColor: "white",
+    backgroundColor: "white"
   },
   button: {
-    backgroundColor: "black",
+    backgroundColor: "#0052ff",
     padding: 15,
     borderRadius: 5,
     width: "40%",
@@ -115,9 +134,14 @@ const styles = StyleSheet.create({
   },
   signupContainer: {
     marginTop: 20,
+    flexDirection: "column", 
+    alignItems: "center", 
   },
+  
   signupText: {
     fontSize: 16,
+    color: "white"
+
   },
   signupButton: {
     color: "blue",

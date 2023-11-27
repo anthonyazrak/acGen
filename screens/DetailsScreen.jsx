@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   View,
@@ -9,28 +9,39 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { markActivityAsCompleted } from "../services/activity"; // Adjust the path as necessary
+import Icon from 'react-native-vector-icons/FontAwesome'; // Importing Icon
 
 function ActivityScreen({ route }) {
   const { response } = route.params; // Assuming response is already a JSON string
   const activityDetails = JSON.parse(response); // Parsing the JSON string to an object
   const navigation = useNavigation();
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const handleMarkAsCompleted = async () => {
     try {
-      console.log("Marking Activity as Completed:", activityDetails.id); // Log the ID for debugging
-      await markActivityAsCompleted(activityDetails.id);
-      Alert.alert("Activity marked as completed", [
+      // If it's already favorite, we might want to unmark it
+      if (isFavorite) {
+        console.log("Unmarking Activity as Favorite:", activityDetails.id);
+        // Here you would call a method to unmark the activity as favorite
+      } else {
+        console.log("Marking Activity as Favorite:", activityDetails.id);
+        await markActivityAsCompleted(activityDetails.id);
+      }
+      setIsFavorite(!isFavorite); // Toggle the favorite status
+      // Provide user feedback
+      Alert.alert(isFavorite ? "Activity unmarked as favorite" : "Activity marked as favorite", [
         {
           text: "OK",
           onPress: () => navigation.navigate("MainTabs"),
         },
-      ]); // Provide user feedback
+      ]);
     } catch (error) {
-      console.error("Error marking activity as completed:", error);
-      Alert.alert("Error marking activity as completed", [
+      console.error("Error handling favorite status:", error);
+      Alert.alert("Error handling favorite status", [
         {
           text: "OK",
         },
-      ]); // Provide user feedback
+      ]);
     }
   };
 
@@ -54,12 +65,17 @@ function ActivityScreen({ route }) {
         </View>
 
         <TouchableOpacity
-          onPress={handleMarkAsCompleted}
-          style={styles.completeButton}
-        >
-          <Text style={styles.completeButtonText}>Complete Activity</Text>
-        </TouchableOpacity>
+      onPress={handleMarkAsCompleted}
+      style={styles.favoriteButton}
+    >
+      <View style={styles.buttonContent}>
+        <Icon name={isFavorite ? "heart" : "heart-o"} size={20} color="#fff" />
+        <Text style={styles.favoriteButtonText}>
+          {isFavorite ? "Unmark as Favorite" : "Mark as Favorite"}
+        </Text>
       </View>
+    </TouchableOpacity>
+        </View>
     </ScrollView>
   );
 }
@@ -90,6 +106,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  favoriteButton: {
+    padding: 15,
+    backgroundColor: "#000",
+    maxWidth: "600px",
+    borderRadius: 10,
+    marginBottom: 20,
+    justifyContent: 'center', // Center the content vertically
+    alignItems: 'center', // Center the content horizontally
+  },
+  buttonContent: {
+    flexDirection: 'row', // Align icon and text horizontally
+    justifyContent: 'center', // Center the content horizontally
+    alignItems: 'center', // Center the content vertically
+  },
+  favoriteButtonText: {
+    marginLeft: 10, // Add some space between icon and text
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   completeButton: {
     padding: 15,
@@ -134,12 +170,12 @@ const styles = StyleSheet.create({
   backButton: {
     marginTop: 40,
     marginBottom: 20,
-    backgroundColor: "#DEC0F1",
+    backgroundColor: "#528ffb",
     padding: 10,
     borderRadius: 10,
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: 15,
     color: "#eff7f6",
   },
 });

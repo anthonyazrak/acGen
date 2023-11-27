@@ -30,7 +30,7 @@ const commonHeaderOptions = {
   headerStyle: {
     shadowColor: 'transparent', // this covers iOS
     elevation: 0, // this covers Android
-    backgroundColor: "#0052ff", // Set the header background color
+    backgroundColor: "#528ffb", // Set the header background color
   },
   
   headerTintColor: "#fff", // Set the text color in the header
@@ -72,14 +72,13 @@ function MainTabNavigator() {
       <Tab.Screen
         name="Saved Activities"
         options={{
-          headerShown: false,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size, focused }) => (
             focused ? <Ionicons name="ios-bookmark" size={24} color="#0052ff" /> :
             <Ionicons name="ios-bookmark-outline" size={24} color="black" />
           ),
         }}
-        component={StackNavigation}
+        component={SavedScreen}
       />
       <Tab.Screen
         name="Generate"
