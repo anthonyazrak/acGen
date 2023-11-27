@@ -33,11 +33,10 @@ function ActivityScreen({ route }) {
     try {
       console.log("Marking Activity as Completed:", activityDetails.id); // Log the ID for debugging
       await toggleActivityCompleteness(activityDetails.id);
-      alert("Activity marked as completed"); // Provide user feedback
+      alert("Activity marked as favorite"); // Provide user feedback
       navigation.navigate('MainTabs')
     } catch (error) {
       console.error("Error marking activity as completed:", error);
-      alert("Failed to mark activity as completed"); // Error feedback
     }
   };
   
