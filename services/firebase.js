@@ -82,7 +82,7 @@ const registerWithEmailAndPassword = async (auth, formData) => {
       city: formData.city,
       age: formData.age,
       name: formData.name,
-      lastName: formData.name,
+      lastName: formData.lastName,
     });
   } catch (err) {
     console.error(err);

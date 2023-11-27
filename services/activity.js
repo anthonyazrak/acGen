@@ -113,6 +113,57 @@ const createActivity = async (userId, activityData) => {
   }
 };
 
+const toggleActivityCompleteness = async (activityId) => {
+  try {
+    // Reference to the specific activity document
+    const activityDocRef = doc(db, "activities", activityId);
+
+    // Get the current activity document
+    const activityDoc = await getDoc(activityDocRef);
+
+    if (activityDoc.exists()) {
+      // Get current completeness status
+      const currentStatus = activityDoc.data().Completed;
+
+      // Update the completeness status to the opposite
+      await updateDoc(activityDocRef, {
+        Completed: !currentStatus
+      });
+
+      console.log(`Activity status toggled. New status: ${!currentStatus}`);
+    } else {
+      console.log("No such activity found!");
+    }
+  } catch (error) {
+    console.error("Error toggling activity completeness:", error);
+    throw error;
+  }
+};
+
+const getActivityCompletionStatus = async (activityId) => {
+  try {
+    // Reference to the specific activity document
+    const activityDocRef = doc(db, "activities", activityId);
+
+    // Get the current activity document
+    const activityDoc = await getDoc(activityDocRef);
+
+    if (activityDoc.exists()) {
+      // Get the completion status
+      const isCompleted = activityDoc.data().Completed;
+      return isCompleted;
+    } else {
+      console.log("No such activity found!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching activity completion status:", error);
+    throw error;
+  }
+};
+
+
+
 // Delete an activity by its ID
 const deleteActivity = async (activityId) => {
   try {
@@ -188,6 +239,22 @@ const addImageDocumentToDoc = async (docId, file) => {
     throw error;
   }
 };
+const updateActivityImage = async (activityId, imageUri) => {
+  // Reference to the specific activity document
+  try{
+    const activityRef = doc(db, "activities", activityId);
+
+  // Update the 'image' field in the document
+  await updateDoc(activityRef, {
+    image: imageUri
+  });
+  console.log("Image document added to Firestore successfully");
+
+} catch (error) {
+  console.error("Error adding image document to Firestore:", error);
+  throw error;
+}
+};
 
 export {
   markActivityAsCompleted,
@@ -197,5 +264,8 @@ export {
   getNotCompletedActivitiesByUid,
   addImageDocumentToDoc,
   getActivityById,
+  toggleActivityCompleteness,
+  getActivityCompletionStatus,
+  updateActivityImage,
   storage,
 };

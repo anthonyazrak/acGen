@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback} from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -21,6 +22,7 @@ import { auth } from "../services/firebase";
 import {
   getCompletedActivitiesByUid,
   addImageDocumentToDoc,
+  updateActivityImage
 } from "../services/activity"; // Adjust the path as necessary
 import { StyleSheet } from "react-native";
 import { storage } from "../services/activity";
@@ -40,23 +42,25 @@ function HomeScreen({ navigation }) {
       }
     }
   };
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      console.log("User state changed:", currentUser); // Add this line
+      setUser(currentUser);
       if (currentUser) {
-        setUser(currentUser);
         fetchActivities();
-      } else {
-        // Handle no user signed in
       }
     });
-
     return () => unsubscribe();
   }, []);
+  
 
-  useEffect(() => {
-    fetchActivities();
-  }, [user]);
+  // Fetch activities when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchActivities();
+    }, [user]) // Dependency array includes 'user' if 'fetchActivities' depends on it
+  );
+
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -89,13 +93,14 @@ function HomeScreen({ navigation }) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       // Convert image to base64
-      const base64Image = await imageToBase64(uri);
-      addImageDocumentToDoc(id, base64Image);
+      // const base64Image = await imageToBase64(uri);
+      // addImageDocumentToDoc(id, base64Image);
+      await updateActivityImage(id, uri);
 
       setActivities((currentActivities) =>
         currentActivities.map((activity) => {
           if (activity.id === id) {
-            return { ...activity, image: base64Image };
+            return { ...activity, image: uri };
           }
           return activity;
         })
@@ -103,99 +108,111 @@ function HomeScreen({ navigation }) {
     }
   };
 
-const imageToBase64 = async (imageFile) => {
+// const imageToBase64 = async (imageFile) => {
+//   try {
+//     if (Platform.OS === "web") {
+//       // For web, fetch the image and convert it to base64
+//       const response = await fetch(imageFile);
+//       const blob = await response.blob();
+
+//       return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+//         reader.onload = async () => {
+//           const img = new Image();
+//           img.onload = () => {
+//             const canvas = document.createElement("canvas");
+//             const ctx = canvas.getContext("2d");
+
+//             // Calculate the new dimensions to maintain aspect ratio
+//             let width = img.width;
+//             let height = img.height;
+//             const maxFileSize = 10 * 1024 * 1024; // 10MB
+//             const maxDimension = Math.sqrt(maxFileSize / (4 / 3)); // Assuming 4:3 aspect ratio
+
+//             if (width > maxDimension || height > maxDimension) {
+//               const aspectRatio = width / height;
+
+//               if (width > height) {
+//                 width = maxDimension;
+//                 height = width / aspectRatio;
+//               } else {
+//                 height = maxDimension;
+//                 width = height * aspectRatio;
+//               }
+//             }
+
+//             // Set canvas dimensions
+//             canvas.width = width;
+//             canvas.height = height;
+
+//             // Draw the image on the canvas with downsampling
+//             ctx.drawImage(img, 0, 0, width, height);
+
+//             // Convert the canvas content to base64
+//             const base64String = canvas.toDataURL("image/jpeg", 0.9); // Adjust the quality if needed
+//             resolve(base64String.split(",")[1]);
+//           };
+//           img.onerror = reject;
+//           img.src = URL.createObjectURL(blob);
+//         };
+//         reader.onerror = reject;
+//         reader.readAsArrayBuffer(blob);
+//       });
+//     } else {
+//   // For mobile, use expo-file-system
+//   const maxFileSize = 10 * 1024 * 1024; // 10MB
+//   const encoding = FileSystem.EncodingType;
+
+//   // Read the file as an ArrayBuffer to check its size
+//   const arrayBuffer = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Binary });
+//   const fileSize = arrayBuffer.byteLength;
+
+//   // Check if downsampling is needed
+//   if (fileSize > maxFileSize) {
+//     // If the file size exceeds the maximum, calculate new dimensions to maintain aspect ratio
+//     const imageBlob = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Base64 });
+//     const img = new Image();
+//     img.src = `data:image/png;base64,${imageBlob}`;
+
+//     let width = img.width;
+//     let height = img.height;
+//     const aspectRatio = width / height;
+
+//     // Calculate new dimensions while maintaining aspect ratio
+//     width = Math.sqrt(maxFileSize * aspectRatio);
+//     height = width / aspectRatio;
+
+//     // Resize the image
+//     const resizedBase64 = await ImageManipulator.manipulateAsync(
+//       `data:image/png;base64,${imageBlob}`,
+//       [{ resize: { width, height } }],
+//       { base64: true, compress: 0.9 }
+//     );
+
+//     return resizedBase64.base64;
+//   } else {
+//     // If downsampling is not needed, read the file as base64 directly
+//     const base64 = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Base64 });
+//     return base64;
+//   }
+//     }
+//   } catch (error) {
+//     console.error("Error converting image to base64:", error);
+//     throw error;
+//   }
+// };
+const imageToBase64 = async (uri) => {
   try {
-    if (Platform.OS === "web") {
-      // For web, fetch the image and convert it to base64
-      const response = await fetch(imageFile);
-      const blob = await response.blob();
-
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-
-            // Calculate the new dimensions to maintain aspect ratio
-            let width = img.width;
-            let height = img.height;
-            const maxFileSize = 10 * 1024 * 1024; // 10MB
-            const maxDimension = Math.sqrt(maxFileSize / (4 / 3)); // Assuming 4:3 aspect ratio
-
-            if (width > maxDimension || height > maxDimension) {
-              const aspectRatio = width / height;
-
-              if (width > height) {
-                width = maxDimension;
-                height = width / aspectRatio;
-              } else {
-                height = maxDimension;
-                width = height * aspectRatio;
-              }
-            }
-
-            // Set canvas dimensions
-            canvas.width = width;
-            canvas.height = height;
-
-            // Draw the image on the canvas with downsampling
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Convert the canvas content to base64
-            const base64String = canvas.toDataURL("image/jpeg", 0.9); // Adjust the quality if needed
-            resolve(base64String.split(",")[1]);
-          };
-          img.onerror = reject;
-          img.src = URL.createObjectURL(blob);
-        };
-        reader.onerror = reject;
-        reader.readAsArrayBuffer(blob);
-      });
-    } else {
-  // For mobile, use expo-file-system
-  const maxFileSize = 10 * 1024 * 1024; // 10MB
-  const encoding = FileSystem.EncodingType;
-
-  // Read the file as an ArrayBuffer to check its size
-  const arrayBuffer = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Binary });
-  const fileSize = arrayBuffer.byteLength;
-
-  // Check if downsampling is needed
-  if (fileSize > maxFileSize) {
-    // If the file size exceeds the maximum, calculate new dimensions to maintain aspect ratio
-    const imageBlob = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Base64 });
-    const img = new Image();
-    img.src = `data:image/png;base64,${imageBlob}`;
-
-    let width = img.width;
-    let height = img.height;
-    const aspectRatio = width / height;
-
-    // Calculate new dimensions while maintaining aspect ratio
-    width = Math.sqrt(maxFileSize * aspectRatio);
-    height = width / aspectRatio;
-
-    // Resize the image
-    const resizedBase64 = await ImageManipulator.manipulateAsync(
-      `data:image/png;base64,${imageBlob}`,
-      [{ resize: { width, height } }],
-      { base64: true, compress: 0.9 }
-    );
-
-    return resizedBase64.base64;
-  } else {
-    // If downsampling is not needed, read the file as base64 directly
-    const base64 = await FileSystem.readAsStringAsync(imageFile, { encoding: encoding.Base64 });
+    const base64 = await FileSystem.readAsStringAsync(uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
     return base64;
-  }
-    }
   } catch (error) {
-    console.error("Error converting image to base64:", error);
+    console.error('Error converting image to base64:', error);
     throw error;
   }
 };
+
 
 
   const onShare = async (id, material, description) => {
@@ -222,24 +239,28 @@ const imageToBase64 = async (imageFile) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
+      {user && <Text style={styles.welcomeText}>Welcome, {user.email}</Text>}
       <Text style={styles.welcomeText}>Favorite Activities</Text>
       <FlatList
-        data={activities}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.activityContainer}>
-            <TouchableOpacity
-
-            >
-              <RNImage
-                source={{ uri: `data:image/png;base64, ${item.image}` }}
-                style={styles.activityImage}
-                onError={(error) =>
-                  console.error("Image loading error:", error.nativeEvent.error, item.image)
-                }
-              />
-            </TouchableOpacity>
+  data={activities}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <View style={styles.activityContainer}>
+      <TouchableOpacity>
+        {item.image ? (
+          <RNImage
+            source={{ uri: item.image }}
+            style={styles.activityImage}
+            onError={(error) =>
+              console.error("Image loading error:", error.nativeEvent.error, item.image)
+            }
+          />        ) : (
+          // Placeholder for when there is no image
+          <View style={styles.activityImagePlaceholder}>
+            <Text>Add Picture</Text>
+          </View>
+        )}
+      </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => pickImage(item.id)}
                 style={styles.addButton}
@@ -299,14 +320,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    paddingTop: 20,
+    justifyContent: 'center', // Added for centering content
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginVertical: 20,
-    color: "#fff",
-    textAlign: "center",
+    color: "#000", // Ensure the text color is visible
+    marginBottom: 10
   },
   activityContainer: {
     alignItems: "center",
